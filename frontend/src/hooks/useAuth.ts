@@ -1,0 +1,120 @@
+import { create } from "zustand";
+import axios, { AxiosResponse } from "axios";
+import apiSecure, { api } from "../libs/axios";
+
+type user = {
+  id: string;
+};
+
+interface useAuthStore {
+  user: user | null;
+  signIn: (username: string, password: string) => Promise<void>;
+  fetchCurrentUser: () => Promise<void>;
+}
+interface AuthResponse {
+  code: number;
+  error: boolean;
+  message: string;
+  data: {
+    email: string;
+    id: string;
+    name: string;
+    token: string;
+    username: string;
+  };
+  errors?: [];
+}
+
+const useAuth = create<useAuthStore>((set) => ({
+  user: null,
+  signIn: async (username: string, password: string): Promise<void> => {
+    try {
+      // Make a POST request to your authentication endpoint using Axios
+      const response: AxiosResponse<AuthResponse> = await api.post(
+        `/auth/login`,
+        {
+          username,
+          password,
+        }
+      );
+
+      // Assuming the authentication response contains a token or user information
+      const userData = response.data.data;
+
+      set({ user: { id: userData.id } });
+      localStorage.setItem("authToken", userData.token);
+    } catch (error: unknown) {
+      // Handle authentication errors
+      if (axios.isAxiosError(error)) {
+        const err = error.response?.data.message;
+        throw new Error(err);
+      } else if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Unknown error occurred.");
+      }
+    }
+  },
+  fetchCurrentUser: async (): Promise<void> => {
+    try {
+      const response: AxiosResponse<AuthResponse> = await apiSecure.get(
+        `/auth/currentuser`
+      );
+
+      const userData = response.data.data;
+
+      set({ user: { id: userData.id } });
+      console.log("SETUP", { id: userData.id });
+    } catch (error: unknown) {
+      // Handle authentication errors
+      if (axios.isAxiosError(error)) {
+        const err = error.response?.data.message;
+        throw new Error(err);
+      } else if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Unknown error occurred.");
+      }
+    }
+  },
+}));
+
+export default useAuth;
+
+// interface useAuth {
+//   user: object | null;
+//   signIn: (username: string, password: string) => Promise<void>;
+// }
+
+// // const useAuth = (): useAuth => {
+// //   const [user, setUser] = useState<object | null>(null);
+
+// //   const signIn = async (username: string, password: string): Promise<void> => {
+// //     try {
+// //       // Make a POST request to your authentication endpoint using Axios
+// //       const response: AxiosResponse<AuthResponse> = await axios.post(
+// //         `${import.meta.env.VITE_API_URL}/auth/login`,
+// //         {
+// //           username,
+// //           password,
+// //         }
+// //       );
+
+// //       // Assuming the authentication response contains a token or user information
+// //       const authToken = response.data.token;
+
+// //       // Update the user state or perform other authentication-related tasks
+// //       setUser({ username, authToken });
+
+// //       // Note: In a real-world scenario, you might store the token in a secure way (e.g., in a cookie or local storage).
+// //     } catch (error) {
+// //       // Handle authentication errors
+// //       console.error("Authentication failed:", error);
+// //       // You might want to set an error state or provide feedback to the user.
+// //     }
+// //   };
+
+// //   return { user, signIn };
+// // };
+
+// // export default useAuth;
