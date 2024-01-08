@@ -3,6 +3,7 @@ import Auth from "./pages/Auth";
 import useAuth from "./hooks/useAuth";
 import Home from "./pages/Home";
 import RequiredAuth from "./RequiredAuth";
+import Layout from "./components/Layout";
 
 // function ProtectedRoute(): JSX.Element {
 //   const { user } = useAuth();
@@ -18,7 +19,9 @@ function AppRoutes(): JSX.Element {
       <Route path="/" element={<Auth />} />
 
       <Route element={<RequiredAuth />}>
-        <Route path="/home" element={<Home />} />
+        <Route element={<Layout />}>
+          <Route path="/home" element={<Home />} />
+        </Route>
       </Route>
     </Routes>
   );

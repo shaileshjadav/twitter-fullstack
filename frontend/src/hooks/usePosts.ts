@@ -2,10 +2,14 @@ import { useQuery } from "react-query";
 import apiSecure from "../libs/axios";
 
 const usePosts = (userId?: string) => {
-  const url = userId ? `/posts?userId=${userId}` : `/posts`;
+  const page = 1;
+  const url = userId
+    ? `/posts?userId=${userId}?page=${page}`
+    : `/posts?page=${page}`;
 
   const fetchPost = async () => {
-    apiSecure.get(url);
+    const result = await apiSecure.get(url);
+    return result.data;
   };
   const { data, error, isLoading } = useQuery("postsData", fetchPost);
 

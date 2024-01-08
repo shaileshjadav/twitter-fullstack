@@ -4,14 +4,9 @@ import { useEffect } from "react";
 import useAuth from "./hooks/useAuth";
 
 function App(): JSX.Element {
-  const { fetchCurrentUser, user } = useAuth();
-  console.log(user);
-
+  const { fetchCurrentUser } = useAuth();
   useEffect(() => {
-    async function auth() {
-      await fetchCurrentUser();
-    }
-    auth();
+    fetchCurrentUser();
   }, [fetchCurrentUser]);
 
   // useEffect(() => {}, [fetchCurrentUser])

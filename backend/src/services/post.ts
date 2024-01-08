@@ -33,21 +33,22 @@ export const getPost = async (
   offset: number,
 ): Promise<Post[]> => {
   return prisma.post.findMany({
-    select: {
-      id: true,
-      body: true,
-      userId: true,
-      createdAt: true,
-      updatedAt: true,
-      likedIds: true,
-    },
+    // select: {
+    //   id: true,
+    //   body: true,
+    //   userId: true,
+    //   createdAt: true,
+    //   updatedAt: true,
+    //   likedIds: true,
+    //   user: true,
+    // },
     where: {
       userId,
     },
-    // include: {
-    //   user: true,
-    //   comments: true,
-    // },
+    include: {
+      user: true,
+      comments: true,
+    },
     orderBy: {
       createdAt: 'desc',
     },

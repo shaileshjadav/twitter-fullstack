@@ -7,6 +7,7 @@ type user = {
 };
 
 interface useAuthStore {
+  isAuthenticate: boolean | null;
   user: user | null;
   signIn: (username: string, password: string) => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
@@ -26,6 +27,7 @@ interface AuthResponse {
 }
 
 const useAuth = create<useAuthStore>((set) => ({
+  isAuthenticate: null,
   user: null,
   signIn: async (username: string, password: string): Promise<void> => {
     try {
@@ -39,7 +41,7 @@ const useAuth = create<useAuthStore>((set) => ({
       );
 
       // Assuming the authentication response contains a token or user information
-      const userData = response.data.data;
+      const userData = response;
 
       set({ user: { id: userData.id } });
       localStorage.setItem("authToken", userData.token);
@@ -61,10 +63,12 @@ const useAuth = create<useAuthStore>((set) => ({
         `/auth/currentuser`
       );
 
-      const userData = response.data.data;
+      const userData = response.data;
 
-      set({ user: { id: userData.id } });
-      console.log("SETUP", { id: userData.id });
+      // set({ user: { id: userData.id } });
+      if (userData) {
+        set(() => ({ isAuthenticate: true, user: { id: userData.id } }));
+      }
     } catch (error: unknown) {
       // Handle authentication errors
       if (axios.isAxiosError(error)) {
