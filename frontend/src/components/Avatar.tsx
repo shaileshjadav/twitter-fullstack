@@ -2,6 +2,8 @@
 // import { useRouter } from "next/router";
 import { useCallback } from "react";
 
+import PlaceHolderImg from "../assets/images/placeholder.png";
+
 interface AvatarProps {
   userId: string;
   isLarge?: boolean;
@@ -33,12 +35,12 @@ const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
 `}
     >
       <img
-        fill
+        // fill
         style={{ objectFit: "cover", borderRadius: "100%" }}
         alt="Avatar"
         // onClick={onClick}
         // src={fetchedUser?.profileImage || "/images/placeholder.png"}
-        src={"/images/placeholder.png"}
+        src={PlaceHolderImg}
       />
     </div>
   );

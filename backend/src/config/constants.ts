@@ -10,4 +10,4 @@ export enum HttpStatusCode {
 
 export const JWTSECRET: Secret | undefined = process.env.JWT_SECRET;
 
-export const POSTS_PER_PAGE: number = 2;
+export const POSTS_PER_PAGE: number = 5;

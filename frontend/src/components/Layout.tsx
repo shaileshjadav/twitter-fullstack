@@ -8,12 +8,14 @@ import Sidebar from "./layout/Sidebar";
 
 const Layout = () => {
   return (
-    <div className="h-screen bg-black">
-      <div className="container h-full mx-auto  xl:px-30 max-w-6xl">
+    <div className="h-screen bg-black overflow-auto">
+      <div className="container h-full mx-auto xl:px-30 max-w-6xl">
         <div className="grid grid-cols-4 h-full">
           <Sidebar />
-          <div className="col-span-3 lg:col-span-2 border-x-{1px}  border-neutral-800">
-            <Outlet />
+          <div className="col-span-3 lg:col-span-2 border-x-1 border-neutral-800 ">
+            <div className="h-full overflow-y-auto p-4">
+              <Outlet />
+            </div>
           </div>
           {/* <FollowBar /> */}
         </div>

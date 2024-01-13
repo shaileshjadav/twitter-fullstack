@@ -56,3 +56,22 @@ export const getPost = async (
     skip: offset,
   });
 };
+
+export const getSinglePost = async (postId: string): Promise<Post | null> => {
+  return prisma.post.findUnique({
+    include: {
+      user: true,
+      comments: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      },
+    },
+    where: {
+      id: postId,
+    },
+  });
+};

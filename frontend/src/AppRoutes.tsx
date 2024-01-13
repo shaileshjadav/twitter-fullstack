@@ -4,6 +4,7 @@ import useAuth from "./hooks/useAuth";
 import Home from "./pages/Home";
 import RequiredAuth from "./RequiredAuth";
 import Layout from "./components/Layout";
+import Post from "./pages/Post";
 
 // function ProtectedRoute(): JSX.Element {
 //   const { user } = useAuth();
@@ -21,6 +22,7 @@ function AppRoutes(): JSX.Element {
       <Route element={<RequiredAuth />}>
         <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/posts/:postId" element={<Post />} />
         </Route>
       </Route>
     </Routes>

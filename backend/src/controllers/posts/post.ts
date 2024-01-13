@@ -1,7 +1,8 @@
 import { Response, Request, NextFunction } from 'express';
 import { success } from '../../helpers/response';
-import { createPost, getPost } from '../../services/post';
+import { createPost, getPost, getSinglePost } from '../../services/post';
 import { HttpStatusCode, POSTS_PER_PAGE } from '../../config/constants';
+import BaseError from '../../helpers/BaseError';
 
 interface RegisterRequestBody {
   body: string;
@@ -9,6 +10,9 @@ interface RegisterRequestBody {
 type queryParams = {
   page: number;
 };
+interface SinglePostParams {
+  postId: string;
+}
 
 export const createPostController = async (
   req: Request,
@@ -50,6 +54,30 @@ export const getPostController = async (
     const posts = await getPost(userId, POSTS_PER_PAGE, offset);
 
     return res.status(HttpStatusCode.OK).json(success(posts));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getSinglePostController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const params = req.params as unknown;
+    const { postId } = params as SinglePostParams;
+
+    const post = await getSinglePost(postId);
+    if (!post) {
+      throw new BaseError(
+        'invalid_post_id',
+        HttpStatusCode.BAD_REQUEST,
+        'Invalid post id while get details',
+      );
+    }
+
+    return res.status(HttpStatusCode.OK).json(success(post));
   } catch (e) {
     next(e);
   }

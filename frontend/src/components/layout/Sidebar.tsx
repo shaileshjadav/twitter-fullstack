@@ -31,8 +31,8 @@ const Sidebar = () => {
     },
   ];
   return (
-    <div className="col-span-1 h-full pr-4 md:pr-5">
-      <div className="flex flex-col flex-end">
+    <div className="col-span-1 h-full pr-4 md:pr-5 ">
+      <div className="flex flex-col flex-end fixed">
         <div className="space-y-2 lg:w[230px]">
           {/* <SidebarLogo /> */}
           {items.map((item) => (

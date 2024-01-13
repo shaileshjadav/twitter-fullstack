@@ -1,13 +1,8 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
-import useLoginModal from "@/hooks/useLoginModal";
-import usePosts from "@/hooks/usePosts";
-import useRegisterModal from "@/hooks/useRegisterModal";
-import axios from "axios";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Button from "@/components/Button";
+import Button from "../components/Button";
 import Avatar from "./Avatar";
-import usePost from "@/hooks/usePost";
+import usePost from "../hooks/usePost";
 
 interface FormProps {
   placeHolder: string;
@@ -15,67 +10,51 @@ interface FormProps {
   postId?: string;
 }
 const Form: React.FC<FormProps> = ({ placeHolder, isComment, postId }) => {
-  const regiterModal = useRegisterModal();
-  const loginModal = useLoginModal();
-  const { data: currentUser } = useCurrentUser();
-  const { mutate: mutatePosts } = usePosts();
-  const { mutate: mutatePost } = usePost(postId as string);
+  const { submitPost, isLoading, isSuccess, isError } = usePost(
+    postId as string
+  );
 
   const [body, setBody] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const url = isComment ? `/api/comments?postId=${postId}` : `/api/posts`;
-      await axios.post(url, { body });
-      toast.success("Tweet Created");
+    submitPost({ body, isComment });
+  }, [body, isComment, submitPost]);
 
+  useEffect(() => {
+    if (isSuccess) {
       setBody("");
-      mutatePosts();
-      mutatePost();
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
+      toast.success("Post created successfully");
     }
-  }, [body, mutatePosts, isComment, postId, mutatePost]);
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isError) {
+      toast.error("Something went wrong!");
+    }
+  }, [isError]);
   return (
     <div className="border-b-[1px] border-neutral-800 px-5 py-2">
-      {currentUser ? (
-        <div className="flex flex-row gap-4">
-          <div>
-            <Avatar userId={currentUser?.id} />
-          </div>
-          <div className="w-full">
-            <textarea
-              disabled={isLoading}
-              onChange={(e) => setBody(e.target.value)}
-              value={body}
-              placeholder={placeHolder}
-              className="disabled:opacity-800 peer resize-none mt-3 w-full bg-black ring-0 outline-none text-[20px] placeholder-neutral-500 text-white "
+      <div className="flex flex-row gap-4">
+        <div>
+          <Avatar userId="12" />
+        </div>
+        <div className="w-full">
+          <textarea
+            disabled={isLoading}
+            onChange={(e) => setBody(e.target.value)}
+            value={body}
+            placeholder={placeHolder}
+            className="disabled:opacity-800 peer resize-none mt-3 w-full bg-black ring-0 outline-none text-[20px] placeholder-neutral-500 text-white "
+          />
+          <hr className="opacity-0 focus:peer-focus:opacity-100 h-[1px] w-full border-neutral-800 transition" />
+          <div className="flex flex-row justify-end mt-4">
+            <Button
+              label="Post"
+              disabled={isLoading || !body}
+              onClick={onSubmit}
             />
-            <hr className="opacity-0 focus:peer-focus:opacity-100 h-[1px] w-full border-neutral-800 transition" />
-            <div className="flex flex-row justify-end mt-4">
-              <Button
-                label="Tweet"
-                disabled={isLoading || !body}
-                onClick={onSubmit}
-              />
-            </div>
           </div>
         </div>
-      ) : (
-        <div className="py-8">
-          <h1 className="text-white text-2xl text-center mb-4 font-bold">
-            Welcome to twitter
-          </h1>
-          <div className="flex flex-row items-center justify-center gap-4">
-            <Button label="Login" onClick={loginModal.onOpen} />
-            <Button label="Register" onClick={regiterModal.onOpen} secondary />
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
