@@ -67,8 +67,8 @@ export const getSinglePostController = async (
   try {
     const params = req.params as unknown;
     const { postId } = params as SinglePostParams;
-
-    const post = await getSinglePost(postId);
+    const userId = req.userId;
+    const post = await getSinglePost(postId, userId);
     if (!post) {
       throw new BaseError(
         'invalid_post_id',

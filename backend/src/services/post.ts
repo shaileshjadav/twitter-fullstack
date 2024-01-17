@@ -10,7 +10,7 @@ interface Post {
   userId: string;
   createdAt: Date;
   updatedAt?: Date;
-  likedIds: string[];
+  userLikes?: unknown;
 }
 
 export const createPost = async ({
@@ -32,7 +32,7 @@ export const getPost = async (
   limit: number,
   offset: number,
 ): Promise<Post[]> => {
-  return prisma.post.findMany({
+  return await prisma.post.findMany({
     // select: {
     //   id: true,
     //   body: true,
@@ -48,6 +48,16 @@ export const getPost = async (
     include: {
       user: true,
       comments: true,
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
+      likes: {
+        where: {
+          userId,
+        },
+      },
     },
     orderBy: {
       createdAt: 'desc',
@@ -57,8 +67,11 @@ export const getPost = async (
   });
 };
 
-export const getSinglePost = async (postId: string): Promise<Post | null> => {
-  return prisma.post.findUnique({
+export const getSinglePost = async (
+  postId: string,
+  userId: string,
+): Promise<Post | null> => {
+  return await prisma.post.findUnique({
     include: {
       user: true,
       comments: {
@@ -67,6 +80,16 @@ export const getSinglePost = async (postId: string): Promise<Post | null> => {
         },
         orderBy: {
           createdAt: 'desc',
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
+      likes: {
+        where: {
+          userId,
         },
       },
     },
