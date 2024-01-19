@@ -1,10 +1,24 @@
+interface comment {
+  id: string;
+}
+
 export interface Post {
   id: string;
   body: string;
   userId: string;
   createdAt: Date;
   updatedAt?: Date;
-  likedIds: string[];
+  hasLiked: boolean;
+  comments: comment[];
+  user: {
+    id: string;
+    name: string;
+    username: string;
+    profileImage: string;
+  };
+  _count: {
+    likes: number;
+  };
 }
 
 export interface SuccessResponse {

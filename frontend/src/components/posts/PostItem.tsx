@@ -7,9 +7,11 @@ import Avatar from "../Avatar";
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage } from "react-icons/ai";
 import useLike from "../../hooks/useLike";
 // import useAuth from "../../hooks/useAuth";
+import { Post } from "../../types";
 
+type onLike = (event: React.MouseEvent<HTMLElement>) => void;
 interface PostItemProps {
-  data: Record<string, any>;
+  data: Post;
 }
 const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
   const navigate = useNavigate();
@@ -32,18 +34,14 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
     navigate(`/posts/${data.id}`);
   }, [data.id, navigate]);
 
-  const hasLiked = useMemo(() => {
-    return !!data.likes.length;
-  }, [data.likes]);
-
-  const onLike = useCallback(
-    (event: any) => {
+  const onLike: onLike = useCallback(
+    (event): void => {
       event.stopPropagation();
       if (!isLoading) {
-        toggleLike(hasLiked);
+        toggleLike(data.hasLiked);
       }
     },
-    [toggleLike, hasLiked, isLoading]
+    [isLoading, toggleLike, data.hasLiked]
   );
 
   const createdAt = useMemo(() => {
@@ -52,7 +50,7 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
     }
     return formatDistanceToNowStrict(new Date(data?.createdAt));
   }, [data?.createdAt]);
-  const LikeIcon = hasLiked ? AiFillHeart : AiOutlineHeart;
+  const LikeIcon = data.hasLiked ? AiFillHeart : AiOutlineHeart;
 
   return (
     <div
@@ -98,7 +96,7 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
               onClick={onLike}
               className="flex flex-row items-center text-neutral-500 gap-2 cursor-pointer transition hover:text-sky-500 "
             >
-              <LikeIcon size={20} color={data.likes.length ? "red" : ""} />
+              <LikeIcon size={20} color={data.hasLiked ? "red" : ""} />
               <p>{data._count.likes || 0}</p>
             </div>
           </div>

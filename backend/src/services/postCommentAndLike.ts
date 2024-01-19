@@ -39,14 +39,33 @@ export const insertPostLike = async ({
   userId,
   postId,
 }: SaveOrDeletePostLikesParams) => {
-  const insertedPostLike = await prisma.like.create({
-    data: {
+  let postLike = null;
+  postLike = await prisma.like.findFirst({
+    where: {
       userId,
       postId,
     },
   });
+  if (postLike) {
+    await prisma.like.update({
+      data: {
+        userId,
+        postId,
+      },
+      where: {
+        id: postLike.id,
+      },
+    });
+  } else {
+    postLike = await prisma.like.create({
+      data: {
+        userId,
+        postId,
+      },
+    });
+  }
 
-  return insertedPostLike;
+  return postLike;
 };
 
 export const deletePostLike = async ({

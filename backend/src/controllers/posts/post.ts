@@ -52,8 +52,16 @@ export const getPostController = async (
     const offset = (page - 1) * POSTS_PER_PAGE;
 
     const posts = await getPost(userId, POSTS_PER_PAGE, offset);
+    const response = posts.map(post => {
+      const hasLiked = post.likes && post.likes.length > 0;
+      return {
+        ...post,
+        hasLiked,
+        likes: undefined, // Remove the 'likes' array
+      };
+    });
 
-    return res.status(HttpStatusCode.OK).json(success(posts));
+    return res.status(HttpStatusCode.OK).json(success(response));
   } catch (e) {
     next(e);
   }
@@ -76,8 +84,12 @@ export const getSinglePostController = async (
         'Invalid post id while get details',
       );
     }
-
-    return res.status(HttpStatusCode.OK).json(success(post));
+    const response = {
+      ...post,
+      hasLiked: post.likes && post.likes.length > 0,
+      likes: undefined,
+    };
+    return res.status(HttpStatusCode.OK).json(success(response));
   } catch (e) {
     next(e);
   }

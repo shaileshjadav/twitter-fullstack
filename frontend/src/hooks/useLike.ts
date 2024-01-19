@@ -6,6 +6,20 @@ import apiSecure from "../libs/axios";
 import reactQueryClient from "../libs/reactQuery";
 import { QUERY_KEYS } from "../constants";
 
+interface Post {
+  id: string;
+  body: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  hasLiked?: boolean;
+  _count: {
+    likes: number;
+  };
+}
+interface allData {
+  pages: Post[][];
+}
 const useLike = ({ postId }: { postId: string }) => {
   const toggleLike = useCallback(
     async (isAlreadyLiked: boolean) => {
@@ -20,42 +34,47 @@ const useLike = ({ postId }: { postId: string }) => {
 
         return { isAlreadyLiked, insertedLike };
       } catch (error) {
-        console.log(e);
-        throw Error(e);
+        console.log(error);
+        toast.error("something went wrong");
+        // throw Error(e);
       }
     },
     [postId]
   );
+  const updateData = (data: allData) => {
+    return {
+      ...data,
+      pages: data.pages.map((page) =>
+        page.map((post: Post) =>
+          post.id === postId
+            ? {
+                ...post,
+                _count: {
+                  likes: post.hasLiked
+                    ? post._count.likes - 1 // Decrement like if already liked
+                    : post._count.likes + 1,
+                },
+                hasLiked: !post.hasLiked,
+              }
+            : post
+        )
+      ),
+    };
+  };
   const mutation = useMutation({
     mutationFn: (isAlreadyLiked: boolean) => toggleLike(isAlreadyLiked),
-    onSuccess: ({ isAlreadyLiked, insertedLike }) => {
-      if (postId) {
-        const mutationKey = `${QUERY_KEYS.post}/${postId}`;
-        reactQueryClient.invalidateQueries({
-          queryKey: [mutationKey],
-        });
-      } else {
-        const mutationKey = QUERY_KEYS.posts;
+    onSuccess: () => {
+      const singlePostMutationKey = `${QUERY_KEYS.post}/${postId}`;
+      reactQueryClient.invalidateQueries({
+        queryKey: [singlePostMutationKey],
+      });
+      // post listing
+      const mutationKey = QUERY_KEYS.posts;
 
-        reactQueryClient.setQueryData([mutationKey], (data) => ({
-          ...data,
-          pages: data.pages.map((page) =>
-            page.map((post) =>
-              post.id === postId
-                ? {
-                    ...post,
-                    _count: {
-                      likes: isAlreadyLiked
-                        ? post._count.likes - 1 // Decrement like if already liked
-                        : post._count.likes + 1,
-                    },
-                    likes: !isAlreadyLiked ? [insertedLike] : [],
-                  }
-                : post
-            )
-          ),
-        }));
-      }
+      reactQueryClient.setQueryData<allData | undefined>(
+        [mutationKey],
+        (data) => updateData(data as allData)
+      );
     },
   });
   return {

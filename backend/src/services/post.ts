@@ -4,13 +4,21 @@ interface CreatePostParams {
   body: string;
   userId: string;
 }
+interface PostLike {
+  id: string;
+  userId: string;
+  postId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
 interface Post {
   id: string;
   body: string;
   userId: string;
   createdAt: Date;
   updatedAt?: Date;
-  userLikes?: unknown;
+  likes?: PostLike[];
 }
 
 export const createPost = async ({
