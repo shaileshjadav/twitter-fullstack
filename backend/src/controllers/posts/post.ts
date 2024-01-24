@@ -9,6 +9,7 @@ interface RegisterRequestBody {
 }
 type queryParams = {
   page: number;
+  userId?: string;
 };
 interface SinglePostParams {
   postId: string;
@@ -45,13 +46,11 @@ export const getPostController = async (
   try {
     const query = req.query as unknown;
     const queryParams = query as queryParams;
-    const { page } = queryParams;
-
-    const userId = req.userId;
+    const { page, userId } = queryParams;
 
     const offset = (page - 1) * POSTS_PER_PAGE;
 
-    const posts = await getPost(userId, POSTS_PER_PAGE, offset);
+    const posts = await getPost(POSTS_PER_PAGE, offset, userId);
     const response = posts.map(post => {
       const hasLiked = post.likes && post.likes.length > 0;
       return {

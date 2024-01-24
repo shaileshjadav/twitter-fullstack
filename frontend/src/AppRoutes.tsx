@@ -1,18 +1,10 @@
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/Auth";
-import useAuth from "./hooks/useAuth";
 import Home from "./pages/Home";
 import RequiredAuth from "./RequiredAuth";
 import Layout from "./components/Layout";
 import Post from "./pages/Post";
-
-// function ProtectedRoute(): JSX.Element {
-//   const { user } = useAuth();
-//   console.log("USER");
-//   console.log(user);
-
-//   return user ? <Outlet /> : <Navigate to="/" replace />;
-// }
+import User from "./pages/User";
 
 function AppRoutes(): JSX.Element {
   return (
@@ -23,6 +15,7 @@ function AppRoutes(): JSX.Element {
         <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/posts/:postId" element={<Post />} />
+          <Route path="/user/:userId" element={<User />} />
         </Route>
       </Route>
     </Routes>

@@ -36,9 +36,9 @@ export const createPost = async ({
 };
 
 export const getPost = async (
-  userId: string,
   limit: number,
   offset: number,
+  userId?: string,
 ): Promise<Post[]> => {
   return await prisma.post.findMany({
     // select: {
@@ -51,7 +51,7 @@ export const getPost = async (
     //   user: true,
     // },
     where: {
-      userId,
+      userId: userId,
     },
     include: {
       user: true,
