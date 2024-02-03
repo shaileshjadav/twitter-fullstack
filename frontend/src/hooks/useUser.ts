@@ -16,7 +16,7 @@ const useUser = (userId: string | undefined) => {
     queryKey: [`${QUERY_KEYS.user}/${userId}`],
     queryFn: fetchUser,
   });
-  const responseData = data;
+  const responseData = data?.data;
   return { data: responseData, error, isLoading };
 };
 export default useUser;

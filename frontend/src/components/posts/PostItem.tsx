@@ -22,13 +22,13 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
     postId: data.id,
   });
 
-  // const goToUser = useCallback(
-  //   (event: any) => {
-  //     event.stopPropagation();
-  //     router.push(`/users/${data.user.id}`);
-  //   },
-  //   [data.user.id, router]
-  // );
+  const goToUser = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+      navigate(`/user/${data.user.id}`);
+    },
+    [data.user.id, navigate]
+  );
 
   const goToPost = useCallback(() => {
     navigate(`/posts/${data.id}`);
@@ -64,12 +64,12 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
           <div className="flex flex-row items-center gap-2 ">
             <p
               className="text-white semibold cursor-pointer hover:underline"
-              // onClick={goToUser}
+              onClick={goToUser}
             >
               {data.user.name}
             </p>
             <span
-              // onClick={goToUser}
+              onClick={goToUser}
               className="text-neutral-500 cursor-pointer hover:underline hidden md:block"
             >
               @{data.user.username}

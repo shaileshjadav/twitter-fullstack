@@ -1,6 +1,11 @@
 import { Response, Request, NextFunction } from 'express';
 import { success } from '../../helpers/response';
-import { createUser, checkLogin, getCurrentUser } from '../../services/auth';
+import {
+  createUser,
+  checkLogin,
+  getCurrentUser,
+  updateCurrentUser,
+} from '../../services/auth';
 
 interface RegisterRequestBody {
   name: string;
@@ -64,6 +69,26 @@ export const currentuser = async (
 
     const user = await getCurrentUser({
       id: userId,
+    });
+
+    return res.status(200).json(success(user));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const userId = req.userId;
+    const userData = req.body;
+
+    const user = await updateCurrentUser({
+      id: userId,
+      userData,
     });
 
     return res.status(200).json(success(user));

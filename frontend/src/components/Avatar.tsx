@@ -18,7 +18,7 @@ const Avatar: React.FC<AvatarProps> = ({
   const onClick = useCallback(
     (event: MouseEvent<HTMLImageElement>) => {
       event.stopPropagation;
-      const url = `/users/${userId}`;
+      const url = `/user/${userId}`;
       navigate(url);
     },
     [navigate, userId]
@@ -37,7 +37,6 @@ const Avatar: React.FC<AvatarProps> = ({
 `}
     >
       <img
-        // fill
         style={{ objectFit: "cover", borderRadius: "100%" }}
         alt="Avatar"
         onClick={onClick}

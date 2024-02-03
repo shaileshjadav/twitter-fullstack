@@ -25,6 +25,8 @@ export const getUserById = async (userId: string): Promise<User | null> => {
       image: true,
       coverImage: true,
       profileImage: true,
+      createAt: true,
+      followingIds: true,
     },
     where: {
       id: userId,

@@ -1,52 +1,59 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
 import { BiCalendar } from "react-icons/bi";
-import useUser from "@/hooks/useUser";
+
 import { format } from "date-fns";
 import { useMemo } from "react";
 import Button from "../Button";
-import useEditModal from "@/hooks/useEditModal";
-import useFollow from "@/hooks/useFollow";
+import useEditModal from "../..//hooks/useEditModal";
+// import useFollow from "@/hooks/useFollow";
+import useAuth from "../../hooks/useAuth";
 
 interface UserBioProps {
   userId: string;
+  userData: {
+    name: string;
+    username: string;
+    bio: string;
+    createAt?: string;
+    followingIds: unknown;
+    followersCount: unknown;
+  };
 }
-const UserBio: React.FC<UserBioProps> = ({ userId }) => {
-  const { data: currentUser, isLoading } = useCurrentUser();
-  const { data: fetchedUser } = useUser(userId);
+const UserBio: React.FC<UserBioProps> = ({ userId, userData }) => {
+  const { user: currentUser } = useAuth();
+
   const editModal = useEditModal();
-  const { isFollowing, toggleFollow } = useFollow(userId);
+  // const { isFollowing, toggleFollow } = useFollow(userId);
   const createAt = useMemo(() => {
-    if (!fetchedUser?.createAt) {
+    if (!userData?.createAt) {
       return null;
     }
 
-    return format(new Date(fetchedUser.createAt), "MMMM yyyy");
-  }, [fetchedUser?.createAt]);
+    return format(new Date(userData.createAt), "MMMM yyyy");
+  }, [userData?.createAt]);
 
   return (
     <div className="border-b-[1px] border-neutral-800 pb-4">
       <div className="flex justify-end p-2">
         {currentUser?.id === userId ? (
-          <Button secondary label="Edit" onClick={editModal.onOpen} />
+          <Button secondary label="Edit Profile" onClick={editModal.onOpen} />
         ) : (
           <Button
-            label={isFollowing ? "Unfollow" : "Follow"}
-            onClick={toggleFollow}
-            secondary={!isFollowing}
-            outline={isFollowing}
+            label="Follow"
+            // label={isFollowing ? "Unfollow" : "Follow"}
+            // onClick={toggleFollow}
+            // secondary={!isFollowing}
+            // outline={isFollowing}
           />
         )}
       </div>
 
       <div className="mt-8 px-4">
         <div className="flex flex-col">
-          <p className="text-white text-2xl font-semibold">
-            {fetchedUser?.name}
-          </p>
-          <p className="text-md text-neutral-500">@{fetchedUser?.username}</p>
+          <p className="text-white text-2xl font-semibold">{userData?.name}</p>
+          <p className="text-md text-neutral-500">@{userData?.username}</p>
         </div>
         <div className="flex flex-col mt-4">
-          <p className="text-white">{fetchedUser?.bio}</p>
+          <p className="text-white">{userData?.bio}</p>
           <div
             className="
               flex 
@@ -63,11 +70,11 @@ const UserBio: React.FC<UserBioProps> = ({ userId }) => {
         </div>
         <div className="flex flex-row items-center mt-4 gap-6">
           <div className="flex flex-row items-center gap-1">
-            <p className="text-white">{fetchedUser?.followingIds?.length}</p>
+            <p className="text-white">{userData?.followingIds?.length}</p>
             <p className="text-neutral-500">Following</p>
           </div>
           <div className="flex flex-row items-center gap-1">
-            <p className="text-white">{fetchedUser?.followersCount || 0}</p>
+            <p className="text-white">{userData?.followersCount || 0}</p>
             <p className="text-neutral-500">Followers</p>
           </div>
         </div>

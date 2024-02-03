@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -56,7 +55,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       <input {...getInputProps()} />
       {base64 ? (
         <div className="flex flex-center justify-center">
-          <Image src={base64} height="100" width="100" alt="Uploaded Image" />
+          <img
+            src={base64}
+            height="100"
+            width="100"
+            alt="Uploaded Image"
+            className="object-cover h-48 w-96"
+          />
         </div>
       ) : (
         <p className="text-white">{label}</p>

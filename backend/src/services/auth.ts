@@ -20,6 +20,18 @@ interface LoginParams {
 interface GetUserParams {
   id: string;
 }
+interface userData {
+  profileImage?: string;
+  coverImage?: string;
+  bio: string;
+  username: string;
+  name: string;
+}
+
+interface updateUserParams {
+  id: string;
+  userData: userData;
+}
 
 interface User {
   id: string;
@@ -150,4 +162,17 @@ export const getCurrentUser = async ({ id }: GetUserParams): Promise<User> => {
     username: user.username,
     email: user.email,
   };
+};
+
+export const updateCurrentUser = async ({
+  id,
+  userData,
+}: updateUserParams): Promise<User> => {
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: userData,
+  });
+  return user;
 };

@@ -1,25 +1,17 @@
-// import Avatar from "../Avatar";
-// import useUser from "/hooks/useUser";
+import Avatar from "../Avatar";
 interface UserHeroProps {
   userId: string;
+  coverImage: string;
+  image: string;
 }
-const UserHero: React.FC<UserHeroProps> = ({ userId }) => {
-  // const { data: fetchedUser, isLoading } = useUser(userId);
+const UserHero: React.FC<UserHeroProps> = ({ coverImage, image, userId }) => {
   return (
     <div>
       <div className="bg-neutral-700 h-44 relative">
-        {/* {fetchedUser?.coverImage && ( */}
-          // <Image
-          //   src={fetchedUser.coverImage}
-          //   fill
-          //   alt="Cover Image"
-          //   style={{ objectFit: "cover" }}
-          // />
-          // <image src="" />
-        {/* )} */}
-        {/* <div className="absolute -bottom-16 left-4">
-          <Avatar userId={userId} isLarge hasBorder />
-        </div> */}
+        {coverImage && <img src={coverImage} />}
+        <div className="absolute -bottom-16 left-4">
+          <Avatar userId={userId} isLarge hasBorder imageUrl={image} />
+        </div>
       </div>
     </div>
   );

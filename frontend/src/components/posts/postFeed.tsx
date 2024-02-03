@@ -10,6 +10,11 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
   const { data: posts = [], ref, isFetchingNextPage } = usePosts(userId);
   return (
     <>
+      {posts.length === 0 && (
+        <div className="flex justify-center text-white p-4 font-bold">
+          <h3>No Posts</h3>
+        </div>
+      )}
       {posts.map((post: Post, index: number) => (
         <PostItem
           key={post.id}

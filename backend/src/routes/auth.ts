@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { register, login, currentuser } from '../controllers/auth/auth';
+import {
+  register,
+  login,
+  currentuser,
+  updateProfile,
+} from '../controllers/auth/auth';
 import {
   validateRegisterRequestBody,
   validateLoginRequestBody,
@@ -15,5 +20,6 @@ router.post(
 );
 router.post('/login', validateRequest(validateLoginRequestBody), login);
 router.get('/currentuser', authMiddleware, currentuser);
+router.patch('/update', authMiddleware, updateProfile);
 
 export default router;

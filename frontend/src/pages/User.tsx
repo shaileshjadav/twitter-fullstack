@@ -1,20 +1,37 @@
 import { useParams } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 import Header from "../components/Header";
 import PostFeed from "../components/posts/postFeed";
-// import UserBio from "../components/users/UserBio";
+import UserBio from "../components/users/UserBio";
 import UserHero from "../components/users/UserHero";
 import useUser from "../hooks/useUser";
+import EditModal from "../components/modals/EditModal";
 
 const User: React.FC = () => {
   const { userId } = useParams();
   const { data: userData, isLoading } = useUser(userId);
-  console.log("userData", userData);
+
   return (
     <>
-      <Header showBackArrow label="test" />
-      {/* <UserHero userId={userId as string} /> */}
-      {/* <PostFeed userId={userId as string} /> */}
+      {isLoading && (
+        <div className="container flex justify-center p-4">
+          <ClipLoader color="#36d7b7" />
+        </div>
+      )}
+      {userData && (
+        <>
+          <Header showBackArrow label={userData.name} />
+          <UserHero
+            userId={userId as string}
+            coverImage={userData.coverImage}
+            image={userData.image}
+          />
+          <UserBio userId={userId as string} userData={userData} />
+          <PostFeed userId={userId as string} />
+          <EditModal />
+        </>
+      )}
     </>
   );
 };

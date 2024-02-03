@@ -43,18 +43,18 @@ const Modal: React.FC<ModalProps> = ({
     <>
       <div
         className="
-  justify-center
-  items-center
-  flex
-  overflow-x-hidden
-  overflow-y-hidden
-  fixed
-  inset-0
-  z-50
-  outline-none
-  focus:multiline-none
-  bg-neutral-800
-  bg-opacity-70
+          justify-center
+          items-center
+          flex
+          overflow-x-hidden
+          overflow-y-hidden
+          fixed
+          inset-0
+          z-50
+          outline-none
+          focus:multiline-none
+          bg-neutral-800
+          bg-opacity-70
   "
       >
         <div className="relative w-full lg:w-3/6 my-6 mx-auto lg:max-w-3xl h-full lg:h-auto ">

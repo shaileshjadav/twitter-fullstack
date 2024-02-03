@@ -12,7 +12,7 @@ const usePosts = (userId?: string) => {
   const fetchPosts = async (page = 1) => {
     try {
       const url = userId
-        ? `/posts?userId=${userId}?page=${page}`
+        ? `/posts?userId=${userId}&page=${page}`
         : `/posts?page=${page}`;
       const result = await apiSecure.get(url);
       return result.data || [];

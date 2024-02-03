@@ -1,70 +1,57 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
-import useEditModal from "@/hooks/useEditModal";
-import useUser from "@/hooks/useUser";
-import axios from "axios";
+import useEditModal from "../../hooks/useEditModal";
+
 import { useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+
 import Modal from "../Modal";
 import Input from "../Input";
 import ImageUpload from "../ImageUpload";
+import useAuth from "../../hooks/useAuth";
+import useUser from "../../hooks/useUser";
+import useUpdateProfile from "../../hooks/useUpdateProfile";
 
 const EditModal = () => {
-  const { data: currentUser } = useCurrentUser();
-  const { mutate: mutateFetchedUser } = useUser(currentUser?.id);
+  const { user: currentUser } = useAuth();
+  const { data: currentUserData } = useUser(currentUser?.id);
+  const { updateProfile, isLoading, isSuccess } = useUpdateProfile(
+    currentUser?.id
+  );
   const editModal = useEditModal();
-
+  const { onClose } = editModal;
   const [profileImage, setProfileImage] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [bio, setBio] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setProfileImage(currentUser?.profileImage);
-    setCoverImage(currentUser?.coverImage);
-    setBio(currentUser?.bio);
-    setName(currentUser?.name);
-    setUsername(currentUser?.username);
+    setProfileImage(currentUserData?.profileImage);
+    setCoverImage(currentUserData?.coverImage);
+    setBio(currentUserData?.bio);
+    setName(currentUserData?.name);
+    setUsername(currentUserData?.username);
   }, [
-    currentUser?.profileImage,
-    currentUser?.coverImage,
-    currentUser?.bio,
-    currentUser?.name,
-    currentUser?.username,
+    currentUserData?.profileImage,
+    currentUserData?.coverImage,
+    currentUserData?.bio,
+    currentUserData?.name,
+    currentUserData?.username,
   ]);
 
   const onSubmit = useCallback(async () => {
-    try {
-      setIsLoading(true);
+    updateProfile({
+      username,
+      name,
+      bio,
+      profileImage,
+      coverImage,
+    });
+  }, [updateProfile, username, name, bio, profileImage, coverImage]);
 
-      await axios.patch("/api/edit", {
-        name,
-        username,
-        profileImage,
-        coverImage,
-        bio,
-      });
-
-      mutateFetchedUser();
-
-      toast.success("Updated");
-      editModal.onClose();
-    } catch (e) {
-      toast.error("Something went wrong!");
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (isSuccess) {
+      onClose();
     }
-  }, [
-    name,
-    username,
-    bio,
-    profileImage,
-    coverImage,
-    mutateFetchedUser,
-    editModal,
-  ]);
-
+  }, [isSuccess, onClose]);
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <ImageUpload
