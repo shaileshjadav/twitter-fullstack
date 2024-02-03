@@ -37,7 +37,7 @@ const Avatar: React.FC<AvatarProps> = ({
 `}
     >
       <img
-        style={{ objectFit: "cover", borderRadius: "100%" }}
+        className="h-full w-full rounded-full object-cover object-center"
         alt="Avatar"
         onClick={onClick}
         src={imageUrl || imagePlaceHolder}

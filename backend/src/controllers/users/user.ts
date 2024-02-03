@@ -3,6 +3,7 @@ import { error, success } from '../../helpers/response';
 import { HttpStatusCode } from '../../config/constants';
 
 import { getUserById } from '../../services/user';
+import { getAWSBaseURL } from '../../helpers/awsHelper';
 
 interface getUserParams {
   userId: string;
@@ -23,7 +24,11 @@ export const getUserController = async (
         .status(HttpStatusCode.NOT_FOUND)
         .json(error('invalid user id', 404));
     }
-
+    if (user.profileImage) {
+      const awsBaseURL = getAWSBaseURL();
+      user.profileImage = awsBaseURL + user.profileImage + '?' + Date.now();
+      user.image = user.profileImage;
+    }
     return res.status(HttpStatusCode.OK).json(success(user));
   } catch (e) {
     next(e);

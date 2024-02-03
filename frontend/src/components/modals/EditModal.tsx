@@ -8,6 +8,7 @@ import ImageUpload from "../ImageUpload";
 import useAuth from "../../hooks/useAuth";
 import useUser from "../../hooks/useUser";
 import useUpdateProfile from "../../hooks/useUpdateProfile";
+import useAwsUpload from "../../hooks/useAwsUpload";
 
 const EditModal = () => {
   const { user: currentUser } = useAuth();
@@ -15,8 +16,10 @@ const EditModal = () => {
   const { updateProfile, isLoading, isSuccess } = useUpdateProfile(
     currentUser?.id
   );
+  const { uploadObject, generatePresignedUrl } = useAwsUpload();
   const editModal = useEditModal();
   const { onClose } = editModal;
+
   const [profileImage, setProfileImage] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [bio, setBio] = useState("");
@@ -38,14 +41,27 @@ const EditModal = () => {
   ]);
 
   const onSubmit = useCallback(async () => {
+    const { presigneUrl, filePath } = await generatePresignedUrl(
+      `auth/presignedurlForProfile`
+    );
+    await uploadObject(presigneUrl, profileImage);
     updateProfile({
       username,
       name,
       bio,
-      profileImage,
+      profileImage: filePath,
       coverImage,
     });
-  }, [updateProfile, username, name, bio, profileImage, coverImage]);
+  }, [
+    generatePresignedUrl,
+    uploadObject,
+    profileImage,
+    updateProfile,
+    username,
+    name,
+    bio,
+    coverImage,
+  ]);
 
   useEffect(() => {
     if (isSuccess) {

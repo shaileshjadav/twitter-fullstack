@@ -11,7 +11,6 @@ import EditModal from "../components/modals/EditModal";
 const User: React.FC = () => {
   const { userId } = useParams();
   const { data: userData, isLoading } = useUser(userId);
-
   return (
     <>
       {isLoading && (

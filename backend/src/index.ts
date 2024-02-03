@@ -4,7 +4,6 @@ import cors from 'cors';
 import router from './routes';
 import { errorHandler } from './helpers/ErrorHandler';
 import errorMiddleware, { routeNotFound } from './middleware/errorMiddleware';
-
 dotenv.config();
 
 const app: Express = express();
@@ -32,5 +31,5 @@ process.on('uncaughtException', (error: Error) => {
 });
 
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Server is running at ${port}`);
 });
