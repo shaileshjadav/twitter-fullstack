@@ -15,6 +15,7 @@ export interface Post {
     name: string;
     username: string;
     profileImage: string;
+    profileImageUrl?: string;
   };
   _count: {
     likes: number;

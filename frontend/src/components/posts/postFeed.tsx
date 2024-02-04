@@ -7,10 +7,15 @@ interface PostFeedProps {
   userId?: string;
 }
 const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
-  const { data: posts = [], ref, isFetchingNextPage } = usePosts(userId);
+  const {
+    data: posts = [],
+    ref,
+    isFetchingNextPage,
+    isFetching,
+  } = usePosts(userId);
   return (
     <>
-      {posts.length === 0 && (
+      {posts.length === 0 && !isFetching && (
         <div className="flex justify-center text-white p-4 font-bold">
           <h3>No Posts</h3>
         </div>
@@ -22,7 +27,7 @@ const PostFeed: React.FC<PostFeedProps> = ({ userId }) => {
           ref={posts.length === index + 1 ? ref : null}
         />
       ))}
-      {isFetchingNextPage && (
+      {(isFetchingNextPage || isFetching) && (
         <div className="container flex justify-center p-4">
           <ClipLoader color="#36d7b7" />
         </div>

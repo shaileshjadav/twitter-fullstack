@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../libs/database';
 import BaseError from '../helpers/BaseError';
 import { HttpStatusCode, JWTSECRET } from '../config/constants';
+import { AuthUser as User } from '../types';
+import { getAWSBaseURL } from '../helpers/awsHelper';
 
 interface RegisterParams {
   name: string;
@@ -31,14 +33,6 @@ interface userData {
 interface updateUserParams {
   id: string;
   userData: userData;
-}
-
-interface User {
-  id: string;
-  name: string | null;
-  email: string | null;
-  username: string | null;
-  token?: string;
 }
 
 interface JwtPayload {
@@ -143,6 +137,7 @@ export const checkLogin = async ({
 };
 
 export const getCurrentUser = async ({ id }: GetUserParams): Promise<User> => {
+  const awsBaseURL = getAWSBaseURL();
   const user = await prisma.user.findUnique({
     where: {
       id,
@@ -155,12 +150,15 @@ export const getCurrentUser = async ({ id }: GetUserParams): Promise<User> => {
       'Invalid user Id!',
     );
   }
-
   return {
     id: user.id,
     name: user.name,
     username: user.username,
     email: user.email,
+    profileImage: user.profileImage,
+    profileImageUrl: user.profileImage
+      ? awsBaseURL + user.profileImage + '?' + Date.now()
+      : '',
   };
 };
 

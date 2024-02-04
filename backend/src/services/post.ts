@@ -1,5 +1,5 @@
 import { prisma } from '../libs/database';
-
+import { User } from '../types';
 interface CreatePostParams {
   body: string;
   userId: string;
@@ -12,6 +12,16 @@ interface PostLike {
   updatedAt?: Date;
 }
 
+interface PostComment {
+  id: string;
+  body: string;
+  userId: string;
+  postId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  user?: User;
+}
+
 interface Post {
   id: string;
   body: string;
@@ -19,6 +29,8 @@ interface Post {
   createdAt: Date;
   updatedAt?: Date;
   likes?: PostLike[];
+  user?: User;
+  comments?: PostComment[];
 }
 
 export const createPost = async ({

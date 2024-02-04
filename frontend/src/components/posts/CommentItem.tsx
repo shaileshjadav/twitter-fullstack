@@ -23,11 +23,10 @@ const CommentItem: React.FC<CommentItemPros> = ({ data }) => {
     }
     return formatDistanceToNowStrict(new Date(data?.createdAt));
   }, [data?.createdAt]);
-
   return (
     <div className="border-b-[1px] border-neutral-800 p-5 cursor-pointer hover:bg-neutral-900 transition">
       <div className="flex flex-row items-start gap-3">
-        <Avatar userId={data.user.id} imageUrl={data.user.profileImage} />
+        <Avatar userId={data.user.id} imageUrl={data.user.profileImageUrl} />
         <div>
           <div className="flex flex-row items-center gap-2">
             <p

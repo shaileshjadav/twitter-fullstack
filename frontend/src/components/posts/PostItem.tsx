@@ -59,7 +59,7 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
       ref={ref}
     >
       <div className="flex flex-row items-start gap-3 ">
-        <Avatar userId={data.userId} imageUrl={data.user.profileImage} />
+        <Avatar userId={data.userId} imageUrl={data.user.profileImageUrl} />
         <div>
           <div className="flex flex-row items-center gap-2 ">
             <p

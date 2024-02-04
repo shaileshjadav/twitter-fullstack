@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import apiSecure, { api } from "../libs/axios";
 
 type user = {
+  profileImageUrl: string | undefined;
   id: string;
 };
 
@@ -22,6 +23,8 @@ interface AuthResponse {
     name: string;
     token: string;
     username: string;
+    profileImage: string;
+    profileImageUrl?: string;
   };
   errors?: [];
 }
@@ -43,7 +46,7 @@ const useAuth = create<useAuthStore>((set) => ({
       // Assuming the authentication response contains a token or user information
       const userData = response;
 
-      set({ user: { id: userData.id } });
+      set({ user: { id: userData.id, profileImageUrl: "" } });
       localStorage.setItem("authToken", userData.token);
     } catch (error: unknown) {
       // Handle authentication errors
@@ -67,7 +70,10 @@ const useAuth = create<useAuthStore>((set) => ({
 
       // set({ user: { id: userData.id } });
       if (userData) {
-        set(() => ({ isAuthenticate: true, user: { id: userData.id } }));
+        set(() => ({
+          isAuthenticate: true,
+          user: { id: userData.id, profileImageUrl: userData?.profileImageUrl },
+        }));
       }
     } catch (error: unknown) {
       // Handle authentication errors

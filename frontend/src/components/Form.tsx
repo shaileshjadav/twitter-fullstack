@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import Button from "../components/Button";
 import Avatar from "./Avatar";
 import usePost from "../hooks/usePost";
+import useAuth from "../hooks/useAuth";
 
 interface FormProps {
   placeHolder: string;
@@ -13,7 +14,7 @@ const Form: React.FC<FormProps> = ({ placeHolder, isComment, postId }) => {
   const { submitPost, isLoading, isSuccess, isError } = usePost(
     postId as string
   );
-
+  const { user: currentUser } = useAuth();
   const [body, setBody] = useState("");
 
   const onSubmit = useCallback(async () => {
@@ -31,11 +32,17 @@ const Form: React.FC<FormProps> = ({ placeHolder, isComment, postId }) => {
       toast.error("Something went wrong!");
     }
   }, [isError]);
+  if (!currentUser) {
+    return false;
+  }
   return (
     <div className="border-b-[1px] border-neutral-800 px-5 py-2">
       <div className="flex flex-row gap-4">
         <div>
-          <Avatar userId="12" />
+          <Avatar
+            userId={currentUser?.id}
+            imageUrl={currentUser?.profileImageUrl}
+          />
         </div>
         <div className="w-full">
           <textarea

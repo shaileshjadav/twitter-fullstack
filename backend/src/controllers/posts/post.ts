@@ -3,6 +3,7 @@ import { success } from '../../helpers/response';
 import { createPost, getPost, getSinglePost } from '../../services/post';
 import { HttpStatusCode, POSTS_PER_PAGE } from '../../config/constants';
 import BaseError from '../../helpers/BaseError';
+import { getAWSBaseURL } from '../../helpers/awsHelper';
 
 interface RegisterRequestBody {
   body: string;
@@ -47,12 +48,17 @@ export const getPostController = async (
     const query = req.query as unknown;
     const queryParams = query as queryParams;
     const { page, userId } = queryParams;
-
+    const awsBaseURL = getAWSBaseURL();
     const offset = (page - 1) * POSTS_PER_PAGE;
 
     const posts = await getPost(POSTS_PER_PAGE, offset, userId);
     const response = posts.map(post => {
       const hasLiked = post.likes && post.likes.length > 0;
+      // user profile imageURL
+      if (post?.user?.profileImage) {
+        post.user.profileImageUrl =
+          awsBaseURL + post.user.profileImage + '?' + Date.now();
+      }
       return {
         ...post,
         hasLiked,
@@ -83,6 +89,23 @@ export const getSinglePostController = async (
         'Invalid post id while get details',
       );
     }
+    const awsBaseURL = getAWSBaseURL();
+    // user profile imageURL
+    if (post?.user?.profileImage) {
+      post.user.profileImageUrl =
+        awsBaseURL + post.user.profileImage + '?' + Date.now();
+    }
+    if (post.comments && post.comments.length) {
+      post.comments?.forEach(comment => {
+        // user profile imageURL
+        if (comment.user) {
+          comment.user.profileImageUrl = comment.user?.profileImage
+            ? awsBaseURL + comment.user?.profileImage + '?' + Date.now()
+            : '';
+        }
+      });
+    }
+
     const response = {
       ...post,
       hasLiked: post.likes && post.likes.length > 0,

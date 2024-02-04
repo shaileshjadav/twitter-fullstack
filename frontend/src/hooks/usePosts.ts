@@ -21,17 +21,23 @@ const usePosts = (userId?: string) => {
     }
   };
 
-  const { data, isSuccess, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useInfiniteQuery({
-      queryKey: [QUERY_KEYS.posts],
-      queryFn: ({ pageParam }) => fetchPosts(pageParam),
-      getNextPageParam: (lastPage, allPages) => {
-        const nextPage =
-          lastPage.length === LIMIT ? allPages.length + 1 : undefined;
-        return nextPage;
-      },
-      initialPageParam: 1,
-    });
+  const {
+    data,
+    isSuccess,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetching,
+  } = useInfiniteQuery({
+    queryKey: [QUERY_KEYS.posts],
+    queryFn: ({ pageParam }) => fetchPosts(pageParam),
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage =
+        lastPage.length === LIMIT ? allPages.length + 1 : undefined;
+      return nextPage;
+    },
+    initialPageParam: 1,
+  });
   // useInfiniteQuery("posts", ({ pageParam = 1 }) => fetchPosts(pageParam), {
   //   getNextPageParam: (lastPage, allPages) => {
   //     const nextPage =
@@ -59,6 +65,7 @@ const usePosts = (userId?: string) => {
     fetchNextPage,
     isFetchingNextPage,
     ref,
+    isFetching,
   };
 };
 export default usePosts;
