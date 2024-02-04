@@ -6,7 +6,7 @@ import {
   getCurrentUser,
   updateCurrentUser,
 } from '../../services/auth';
-import { generatePresignedUrlForProfile } from '../../helpers/awsHelper';
+import { generatePresignedUrl } from '../../helpers/awsHelper';
 
 interface RegisterRequestBody {
   name: string;
@@ -104,12 +104,34 @@ export const getPresignedUrlForProfileImage = async (
 ): Promise<Response | void> => {
   try {
     const userId = req.userId;
-    const { clientUrl, key } = await generatePresignedUrlForProfile(userId);
+    const filePath = `profile/${userId}.png`;
+    const url = await generatePresignedUrl(userId, filePath);
 
     return res.status(200).json(
       success({
-        url: clientUrl,
-        filePath: key,
+        url,
+        filePath,
+      }),
+    );
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getPresignedUrlForCoverImage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    const userId = req.userId;
+    const filePath = `cover/${userId}.png`;
+    const url = await generatePresignedUrl(userId, filePath);
+
+    return res.status(200).json(
+      success({
+        url,
+        filePath,
       }),
     );
   } catch (e) {

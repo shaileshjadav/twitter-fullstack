@@ -23,8 +23,8 @@ const User: React.FC = () => {
           <Header showBackArrow label={userData.name} />
           <UserHero
             userId={userId as string}
-            coverImage={userData.coverImage}
-            image={userData.image}
+            coverImage={userData.coverImageUrl}
+            image={userData.profileImageUrl}
           />
           <UserBio userId={userId as string} userData={userData} />
           <PostFeed userId={userId as string} />

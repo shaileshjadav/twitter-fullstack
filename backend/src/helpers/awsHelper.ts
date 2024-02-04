@@ -12,11 +12,10 @@ const createPresignedUrl = (key: string) => {
 export const getAWSBaseURL = () => {
   return `https://s3.${AWSConfig.region}.amazonaws.com/${AWSConfig.bucket}/`;
 };
-export const generatePresignedUrlForProfile = async (userId: string) => {
+export const generatePresignedUrl = async (userId: string, key: string) => {
   try {
-    const key = `profile/${userId}.png`;
     const clientUrl = await createPresignedUrl(key);
-    return { clientUrl, key };
+    return clientUrl;
   } catch (error) {
     throw new BaseError(
       'generate_presigned_url_for_profile_failed',

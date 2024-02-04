@@ -5,6 +5,7 @@ import {
   currentuser,
   updateProfile,
   getPresignedUrlForProfileImage,
+  getPresignedUrlForCoverImage,
 } from '../controllers/auth/auth';
 import {
   validateRegisterRequestBody,
@@ -26,6 +27,11 @@ router.get(
   '/presignedurlForProfile',
   authMiddleware,
   getPresignedUrlForProfileImage,
+);
+router.get(
+  '/presignedurlForCoverImage',
+  authMiddleware,
+  getPresignedUrlForCoverImage,
 );
 
 export default router;

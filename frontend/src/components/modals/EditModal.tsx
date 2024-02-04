@@ -41,26 +41,44 @@ const EditModal = () => {
   ]);
 
   const onSubmit = useCallback(async () => {
-    const { presigneUrl, filePath } = await generatePresignedUrl(
-      `auth/presignedurlForProfile`
-    );
-    await uploadObject(presigneUrl, profileImage);
+    let profileImageKeyPath = currentUserData?.profileImage || null;
+
+    if (profileImage && currentUserData?.profileImage !== profileImage) {
+      const { presigneUrl, filePath } = await generatePresignedUrl(
+        `auth/presignedurlForProfile`
+      );
+      await uploadObject(presigneUrl, profileImage);
+      profileImageKeyPath = filePath;
+    }
+
+    let coverImageKeyPath = currentUserData?.coverImage || null;
+    if (coverImage && currentUserData.coverImage !== coverImage) {
+      const {
+        presigneUrl: presigneUrlForCoverImage,
+        filePath: coverImagefilePath,
+      } = await generatePresignedUrl(`auth/presignedurlForCoverImage`);
+      await uploadObject(presigneUrlForCoverImage, coverImage);
+      coverImageKeyPath = coverImagefilePath;
+    }
+
     updateProfile({
       username,
       name,
       bio,
-      profileImage: filePath,
-      coverImage,
+      profileImage: profileImageKeyPath,
+      coverImage: coverImageKeyPath,
     });
   }, [
-    generatePresignedUrl,
-    uploadObject,
+    currentUserData?.profileImage,
+    currentUserData.coverImage,
     profileImage,
+    coverImage,
     updateProfile,
     username,
     name,
     bio,
-    coverImage,
+    generatePresignedUrl,
+    uploadObject,
   ]);
 
   useEffect(() => {
@@ -68,17 +86,18 @@ const EditModal = () => {
       onClose();
     }
   }, [isSuccess, onClose]);
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <ImageUpload
-        value={profileImage}
+        value={currentUserData.profileImageUrl || profileImage}
         disabled={isLoading}
         onChange={(image) => setProfileImage(image)}
         label="Upload profile image"
       />
 
       <ImageUpload
-        value={coverImage}
+        value={currentUserData.coverImageUrl || coverImage}
         disabled={isLoading}
         onChange={(image) => setCoverImage(image)}
         label="Upload cover image"

@@ -24,12 +24,16 @@ export const getUserController = async (
         .status(HttpStatusCode.NOT_FOUND)
         .json(error('invalid user id', 404));
     }
-    if (user.profileImage) {
-      const awsBaseURL = getAWSBaseURL();
-      user.profileImage = awsBaseURL + user.profileImage + '?' + Date.now();
-      user.image = user.profileImage;
+    const userData = { ...user, profileImageUrl: '', coverImageUrl: '' };
+    const awsBaseURL = getAWSBaseURL();
+    if (userData.profileImage) {
+      userData.profileImageUrl =
+        awsBaseURL + user.profileImage + '?' + Date.now();
     }
-    return res.status(HttpStatusCode.OK).json(success(user));
+    if (userData.coverImage) {
+      userData.coverImageUrl = awsBaseURL + user.coverImage + '?' + Date.now();
+    }
+    return res.status(HttpStatusCode.OK).json(success(userData));
   } catch (e) {
     next(e);
   }
