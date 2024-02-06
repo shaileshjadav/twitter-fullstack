@@ -2,17 +2,28 @@ import { useMutation } from "@tanstack/react-query";
 import apiSecure from "../libs/axios";
 import reactQueryClient from "../libs/reactQuery";
 import { QUERY_KEYS } from "../constants";
+import useAwsUpload from "../hooks/useAwsUpload";
+
 interface CreatePostData {
   body: string;
   isComment?: boolean;
+  image?: string | null;
 }
 const usePost = (postId: string) => {
+  const { uploadObject, generatePresignedUrl } = useAwsUpload();
   const addPost = async (postData: CreatePostData) => {
-    const { isComment } = postData;
+    const { isComment, image } = postData;
     if (isComment) {
       delete postData.isComment;
     }
     try {
+      if (image) {
+        const { presigneUrl, filePath } = await generatePresignedUrl(
+          `posts/presignedurl`
+        );
+        await uploadObject(presigneUrl, image);
+        postData.image = filePath;
+      }
       const url = isComment ? `/comments?postId=${postId}` : `/posts`;
       return await apiSecure.post(url, postData);
     } catch (e) {

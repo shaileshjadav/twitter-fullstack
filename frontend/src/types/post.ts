@@ -10,6 +10,7 @@ export interface Post {
   updatedAt?: Date;
   hasLiked: boolean;
   comments: comment[];
+  imageUrl?: string | null;
   user: {
     id: string;
     name: string;

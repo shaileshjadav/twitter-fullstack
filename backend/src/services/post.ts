@@ -3,6 +3,7 @@ import { User } from '../types';
 interface CreatePostParams {
   body: string;
   userId: string;
+  image?: string | null;
 }
 interface PostLike {
   id: string;
@@ -28,6 +29,8 @@ interface Post {
   userId: string;
   createdAt: Date;
   updatedAt?: Date;
+  image?: string | null;
+  imageUrl?: string | null;
   likes?: PostLike[];
   user?: User;
   comments?: PostComment[];
@@ -36,11 +39,13 @@ interface Post {
 export const createPost = async ({
   body,
   userId,
+  image,
 }: CreatePostParams): Promise<Post> => {
   const insertedPost = await prisma.post.create({
     data: {
       body,
       userId,
+      image,
     },
   });
 

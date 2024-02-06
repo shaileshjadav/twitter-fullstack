@@ -3,6 +3,7 @@ import {
   createPostController,
   getPostController,
   getSinglePostController,
+  generatePresignedUrlController,
 } from '../controllers/posts/post';
 
 import {
@@ -15,6 +16,8 @@ import { validateRequest } from '../middleware/validateRequest';
 const router = Router();
 router.post('/', validateRequest(validateCreatePost), createPostController);
 router.get('/', validateRequest(validateGetPost), getPostController);
+router.get('/presignedurl', generatePresignedUrlController);
+
 router.get(
   '/:postId',
   validateRequest(validateGetPostDetails),

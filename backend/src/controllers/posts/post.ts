@@ -1,12 +1,15 @@
 import { Response, Request, NextFunction } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+
 import { success } from '../../helpers/response';
 import { createPost, getPost, getSinglePost } from '../../services/post';
 import { HttpStatusCode, POSTS_PER_PAGE } from '../../config/constants';
 import BaseError from '../../helpers/BaseError';
-import { getAWSBaseURL } from '../../helpers/awsHelper';
+import { generatePresignedUrl, getAWSBaseURL } from '../../helpers/awsHelper';
 
 interface RegisterRequestBody {
   body: string;
+  image?: string | null;
 }
 type queryParams = {
   page: number;
@@ -21,11 +24,11 @@ export const createPostController = async (
   res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
-  const { body }: RegisterRequestBody = req.body;
+  const { body, image = null }: RegisterRequestBody = req.body;
 
   try {
     const userId = req.userId;
-    const insertedPost = await createPost({ body, userId });
+    const insertedPost = await createPost({ body, userId, image });
 
     return res.status(HttpStatusCode.OK).json(success(insertedPost));
   } catch (e) {
@@ -58,6 +61,9 @@ export const getPostController = async (
       if (post?.user?.profileImage) {
         post.user.profileImageUrl =
           awsBaseURL + post.user.profileImage + '?' + Date.now();
+      }
+      if (post.image) {
+        post.imageUrl = awsBaseURL + post.image;
       }
       return {
         ...post,
@@ -112,6 +118,28 @@ export const getSinglePostController = async (
       likes: undefined,
     };
     return res.status(HttpStatusCode.OK).json(success(response));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const generatePresignedUrlController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  try {
+    console.log('SFDFF');
+    const userId = req.userId;
+    const filePath = `media/${uuidv4()}.png`;
+    const url = await generatePresignedUrl(userId, filePath);
+
+    return res.status(200).json(
+      success({
+        url,
+        filePath,
+      }),
+    );
   } catch (e) {
     next(e);
   }

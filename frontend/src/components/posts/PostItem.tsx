@@ -77,6 +77,17 @@ const PostItem = forwardRef<HTMLDivElement, PostItemProps>(({ data }, ref) => {
             <span className="text-neutral-500 text-sm">{createdAt}</span>
           </div>
           <div className="text-white mt-1">{data.body}</div>
+          {data.imageUrl && (
+            <div>
+              <img
+                src={data.imageUrl}
+                height="100"
+                width="100"
+                alt="Uploaded Image"
+                className="object-cover h-48 w-96 mt-2"
+              />
+            </div>
+          )}
           <div className="flex flex-rows items-center mt-3 gap-10">
             <div
               className="
