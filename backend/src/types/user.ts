@@ -19,6 +19,7 @@ export interface AuthUser {
   email: optionalField;
   username: optionalField;
   token?: string;
+  refreshToken?: string;
   profileImage?: optionalField;
   profileImageUrl?: optionalField;
 }

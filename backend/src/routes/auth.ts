@@ -6,10 +6,12 @@ import {
   updateProfile,
   getPresignedUrlForProfileImage,
   getPresignedUrlForCoverImage,
+  refreshTokenController,
 } from '../controllers/auth/auth';
 import {
   validateRegisterRequestBody,
   validateLoginRequestBody,
+  validateRefreshTokenequestBody,
 } from '../validators/auth';
 import { validateRequest } from '../middleware/validateRequest';
 import authMiddleware from '../middleware/authMiddleware';
@@ -22,6 +24,11 @@ router.post(
 );
 router.post('/login', validateRequest(validateLoginRequestBody), login);
 router.get('/currentuser', authMiddleware, currentuser);
+router.post(
+  '/refreshToken',
+  validateRequest(validateRefreshTokenequestBody),
+  refreshTokenController,
+);
 router.patch('/update', authMiddleware, updateProfile);
 router.get(
   '/presignedurlForProfile',

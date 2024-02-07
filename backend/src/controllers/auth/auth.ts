@@ -5,6 +5,7 @@ import {
   checkLogin,
   getCurrentUser,
   updateCurrentUser,
+  refreshTokenService,
 } from '../../services/auth';
 import { generatePresignedUrl } from '../../helpers/awsHelper';
 
@@ -132,6 +133,29 @@ export const getPresignedUrlForCoverImage = async (
       success({
         url,
         filePath,
+      }),
+    );
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const refreshTokenController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  const { refreshToken: refreshTokenVal }: { refreshToken: string } = req.body;
+
+  try {
+    const { accessToken, refreshToken } = await refreshTokenService({
+      refreshTokenVal,
+    });
+
+    return res.status(200).json(
+      success({
+        token: accessToken,
+        refreshToken,
       }),
     );
   } catch (e) {

@@ -1,5 +1,3 @@
-// import useCurrentUser from "@/hooks/useCurrentUser";
-// import useLoginModal from "@/hooks/useLoginModal";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { forwardRef, useCallback, useMemo } from "react";

@@ -9,7 +9,6 @@ function App(): JSX.Element {
     fetchCurrentUser();
   }, [fetchCurrentUser]);
 
-  // useEffect(() => {}, [fetchCurrentUser])
   return (
     <>
       <AppRoutes />
