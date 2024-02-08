@@ -15,20 +15,14 @@ interface useAuthStore {
   fetchCurrentUser: () => Promise<void>;
 }
 interface AuthResponse {
-  code: number;
-  error: boolean;
-  message: string;
-  data: {
-    email: string;
-    id: string;
-    name: string;
-    token: string;
-    username: string;
-    profileImage: string;
-    profileImageUrl?: string;
-    refreshToken:string;
-  };
-  errors?: [];
+  email: string;
+  id: string;
+  name: string;
+  token: string;
+  username: string;
+  profileImage: string;
+  profileImageUrl?: string;
+  refreshToken: string;
 }
 
 const useAuth = create<useAuthStore>((set) => ({
@@ -45,8 +39,7 @@ const useAuth = create<useAuthStore>((set) => ({
         }
       );
 
-      const userData = response.data.data;
-      console.log(response);
+      const userData = response.data;
       set({ user: { id: userData.id, profileImageUrl: "" } });
       saveRefreshToken(userData.refreshToken);
       saveAccessToken(userData.token);
@@ -68,10 +61,9 @@ const useAuth = create<useAuthStore>((set) => ({
         `/auth/currentuser`
       );
 
-      const userData = response.data;
-
       // set({ user: { id: userData.id } });
-      if (userData) {
+      if (response) {
+        const userData = response.data;
         set(() => ({
           isAuthenticate: true,
           user: { id: userData.id, profileImageUrl: userData?.profileImageUrl },
@@ -87,6 +79,10 @@ const useAuth = create<useAuthStore>((set) => ({
       } else {
         throw new Error("Unknown error occurred.");
       }
+    } finally {
+      set(() => ({
+        isAuthenticate: false,
+      }));
     }
   },
 }));

@@ -1,34 +1,39 @@
 import { COOKIE_NAMES } from "../constants";
 
-export const setCookie = (name:string, value:string, days?: number)=>{
-    let expires = "";
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }else {
-        const date = (new Date(Date.now() + 3600 * 1000)); // Set cookie expiry time to one hour
-        expires = "; expires=" + date.toUTCString();
+export const setCookie = (name: string, value: string, days?: number) => {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  } else {
+    const date = new Date(Date.now() + 3600 * 1000); // Set cookie expiry time to one hour
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie =
+    name + "=" + encodeURIComponent(value || "") + ";" + expires + "; path=/";
+};
+
+export const getCookie = (name: string) => {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) {
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
     }
-    document.cookie = name + "=" + (encodeURIComponent (value || "") )+";" + expires + "; path=/";
-}
+  }
+  return null;
+};
 
-export const getCookie= (name:string)=>{
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for(let i=0;i < ca.length;i++) {
-        let c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length,c.length));
-    }
-    return null;
-}
+export const eraseCookie = (name: string) => {
+  document.cookie = name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+};
 
-export const eraseCookie = (name:string)  =>{   
-    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-export const saveRefreshToken = (token: string) => setCookie(COOKIE_NAMES.refreshToken,token, 7);
-export const saveAccessToken = (token: string) => setCookie(COOKIE_NAMES.accessToken,token);
+export const saveRefreshToken = (token: string) =>
+  setCookie(COOKIE_NAMES.refreshToken, token, 7);
+export const saveAccessToken = (token: string) =>
+  setCookie(COOKIE_NAMES.accessToken, token);
 export const destroyRefreshToken = () => eraseCookie(COOKIE_NAMES.refreshToken);
 export const getRefreshToken = () => getCookie(COOKIE_NAMES.refreshToken);

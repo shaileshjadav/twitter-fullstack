@@ -1,4 +1,6 @@
 import { useCallback, useState } from "react";
+
+import { useNavigate } from "react-router-dom";
 import { signIn } from "next-auth/react";
 
 import useLoginModal from "@/hooks/useLoginModal";
@@ -11,6 +13,7 @@ import toast from "react-hot-toast";
 const RegisterModal = () => {
   const loginModal = useLoginModal();
   const registerModal = useRegisterModal();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,13 +37,14 @@ const RegisterModal = () => {
         password,
       });
       registerModal.onClose();
+      navigate("/home");
     } catch (e) {
       console.log(e);
       toast.error("something went wrong!");
     } finally {
       setIsLoading(false);
     }
-  }, [registerModal, email, name, userName, password]);
+  }, [email, name, userName, password, registerModal, navigate]);
 
   const onToggle = useCallback(() => {
     if (isLoading) {
