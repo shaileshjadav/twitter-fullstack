@@ -1,8 +1,13 @@
+import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "./hooks/useAuth";
 import { ClipLoader } from "react-spinners";
 
 const RequiredAuth = () => {
+  const { fetchCurrentUser } = useAuth();
+  useEffect(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
   const { isAuthenticate, user } = useAuth();
   if (isAuthenticate === null) {
     return (

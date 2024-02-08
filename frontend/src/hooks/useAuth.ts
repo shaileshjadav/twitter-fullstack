@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import apiSecure, { api } from "../libs/axios";
+import { saveAccessToken, saveRefreshToken } from "../utils/cookie";
 
 type user = {
   profileImageUrl: string | undefined;
@@ -25,6 +26,7 @@ interface AuthResponse {
     username: string;
     profileImage: string;
     profileImageUrl?: string;
+    refreshToken:string;
   };
   errors?: [];
 }
@@ -43,11 +45,11 @@ const useAuth = create<useAuthStore>((set) => ({
         }
       );
 
-      // Assuming the authentication response contains a token or user information
-      const userData = response;
-
+      const userData = response.data.data;
+      console.log(response);
       set({ user: { id: userData.id, profileImageUrl: "" } });
-      localStorage.setItem("authToken", userData.token);
+      saveRefreshToken(userData.refreshToken);
+      saveAccessToken(userData.token);
     } catch (error: unknown) {
       // Handle authentication errors
       if (axios.isAxiosError(error)) {

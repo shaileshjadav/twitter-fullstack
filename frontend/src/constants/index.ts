@@ -5,3 +5,8 @@ export const QUERY_KEYS = {
   post: "post",
   user: "user",
 };
+
+export const COOKIE_NAMES= {
+  accessToken: `${import.meta.env.VITE_ENV}_access_token`,
+  refreshToken: `${import.meta.env.VITE_ENV}_refresh_token`,
+}

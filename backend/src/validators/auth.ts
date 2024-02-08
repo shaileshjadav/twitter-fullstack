@@ -61,7 +61,5 @@ export const validateRefreshTokenequestBody = [
   body('refreshToken')
     .notEmpty()
     .withMessage('RefreshToken is required')
-    .isString()
-    .withMessage('Name must be a string')
-    .trim(),
+    .isString(),
 ];

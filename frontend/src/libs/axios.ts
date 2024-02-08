@@ -1,4 +1,6 @@
 import axios from "axios";
+import { destroyRefreshToken, getCookie, getRefreshToken, saveAccessToken, saveRefreshToken } from "../utils/cookie";
+import { COOKIE_NAMES } from "../constants";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -8,7 +10,7 @@ export const api = axios.create({
 });
 
 const apiSecure = () => {
-  const token: string | null = localStorage.getItem("authToken");
+  const token: string | null = getCookie(COOKIE_NAMES.accessToken);
   // axios instance for making requests
   const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
@@ -25,13 +27,8 @@ const apiSecure = () => {
     return config;
   });
 
-  const saveToken = (token: string) => {
-    localStorage.setItem("REFRESH-TOKEN", token);
-  };
-  const destroyToken = () => {
-    localStorage.removeItem("REFRESH-TOKEN");
-  };
-  const _getToken = () => localStorage.getItem("REFRESH-TOKEN");
+
+
   const interceptor = axiosInstance.interceptors.response.use(
     function (response) {
       return response.data;
@@ -53,11 +50,11 @@ const apiSecure = () => {
 
       return axios
         .post(import.meta.env.VITE_API_URL + "/auth/refreshToken", {
-          refreshToken: _getToken(),
+          refreshToken: getRefreshToken(),
         })
         .then((response) => {
-          saveToken(response.data.data.refreshToken);
-          localStorage.setItem("authToken", response.data.data.token);
+          saveRefreshToken(response.data.data.refreshToken);
+          saveAccessToken(response.data.data.token);
           error.response.config.headers["Authorization"] =
             "Bearer " + response.data.data.token;
           // Retry the initial call, but with the updated token in the headers.
@@ -66,9 +63,8 @@ const apiSecure = () => {
         })
         .catch((error2) => {
           // Retry failed, clean up and reject the promise
-          destroyToken();
-          console.log("LOGIN REDIRECT");
-          // this.router.push("/login");
+          destroyRefreshToken();
+          window.location.href= "/";
           return Promise.reject(error2);
         });
     }
