@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import useLoginModal from "../../hooks/useLoginModal";
@@ -10,6 +11,7 @@ import useAuth from "../../hooks/useAuth";
 const LoginModal = () => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +25,7 @@ const LoginModal = () => {
       await signIn(email, password);
 
       loginModal.onClose();
+      navigate("/home");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -32,7 +35,7 @@ const LoginModal = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [signIn, email, password, loginModal]);
+  }, [signIn, email, password, loginModal, navigate]);
 
   const onToggle = useCallback(() => {
     if (isLoading) {
