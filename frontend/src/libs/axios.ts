@@ -1,4 +1,6 @@
 import axios from "axios";
+import type { AxiosInstance, AxiosRequestConfig } from "axios";
+
 import { destroyRefreshToken, getCookie, getRefreshToken, saveAccessToken, saveRefreshToken } from "../utils/cookie";
 import { COOKIE_NAMES } from "../constants";
 
@@ -69,7 +71,11 @@ const apiSecure = () => {
         });
     }
   );
+  
+
   return axiosInstance;
 };
+
+const axios = <T>(cfg: AxiosRequestConfig, instance: AxiosInstance) => instance.request<unknown, T>(cfg);
 
 export default apiSecure();

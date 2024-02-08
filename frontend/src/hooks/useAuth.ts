@@ -14,6 +14,24 @@ interface useAuthStore {
   signIn: (username: string, password: string) => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
 }
+interface SignInResponse {
+    code: number;
+    error: boolean;
+    message: string;
+    data: {
+      email: string;
+      id: string;
+      name: string;
+      token: string;
+      username: string;
+      profileImage: string;
+      profileImageUrl?: string;
+      refreshToken:string;
+    };
+    errors?: [];  
+
+}
+
 interface AuthResponse {
   code: number;
   error: boolean;
@@ -37,7 +55,7 @@ const useAuth = create<useAuthStore>((set) => ({
   signIn: async (username: string, password: string): Promise<void> => {
     try {
       // Make a POST request to your authentication endpoint using Axios
-      const response: AxiosResponse<AuthResponse> = await api.post(
+      const response: AxiosResponse<SignInResponse> = await api.post(
         `/auth/login`,
         {
           username,
@@ -68,8 +86,8 @@ const useAuth = create<useAuthStore>((set) => ({
         `/auth/currentuser`
       );
 
-      const userData = response.data;
-
+      const userData = response.data.data;
+      console.log(response.data);
       // set({ user: { id: userData.id } });
       if (userData) {
         set(() => ({

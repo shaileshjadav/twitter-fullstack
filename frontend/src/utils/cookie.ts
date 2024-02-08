@@ -10,7 +10,7 @@ export const setCookie = (name:string, value:string, days?: number)=>{
         const date = (new Date(Date.now() + 3600 * 1000)); // Set cookie expiry time to one hour
         expires = "; expires=" + date.toUTCString();
     }
-    document.cookie = name + "=" + (encodeURIComponent (value || "") )+";" + expires + "; path=/";
+        document.cookie = name + "=" + (encodeURIComponent (value || "") )+";" + expires + "; path=/";
 }
 
 export const getCookie= (name:string)=>{

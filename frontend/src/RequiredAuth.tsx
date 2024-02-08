@@ -6,9 +6,10 @@ import { ClipLoader } from "react-spinners";
 const RequiredAuth = () => {
   const { fetchCurrentUser } = useAuth();
   useEffect(() => {
-    fetchCurrentUser();
+        fetchCurrentUser();
   }, [fetchCurrentUser]);
   const { isAuthenticate, user } = useAuth();
+  console.log(isAuthenticate);
   if (isAuthenticate === null) {
     return (
       <div className="flex h-screen items-center justify-center bg-black ">
@@ -16,6 +17,6 @@ const RequiredAuth = () => {
       </div>
     );
   }
-  return user ? <Outlet /> : <Navigate to="/" replace />;
+    return user ? <Outlet /> : <Navigate to="/" replace />;
 };
 export default RequiredAuth;
