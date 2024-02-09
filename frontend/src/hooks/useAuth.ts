@@ -1,18 +1,32 @@
 import { create } from "zustand";
 import axios, { AxiosResponse } from "axios";
 import apiSecure, { api } from "../libs/axios";
-import { saveAccessToken, saveRefreshToken } from "../utils/cookie";
+import {
+  destroyAccessToken,
+  destroyRefreshToken,
+  saveAccessToken,
+  saveRefreshToken,
+} from "../utils/cookie";
 
 type user = {
   profileImageUrl: string | undefined;
   id: string;
 };
 
+interface SignUpData {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+}
+
 interface useAuthStore {
   isAuthenticate: boolean | null;
   user: user | null;
   signIn: (username: string, password: string) => Promise<void>;
+  signup: (signupData: SignUpData) => Promise<void>;
   fetchCurrentUser: () => Promise<void>;
+  signOut: () => void;
 }
 interface AuthResponse {
   email: string;
@@ -28,9 +42,31 @@ interface AuthResponse {
 const useAuth = create<useAuthStore>((set) => ({
   isAuthenticate: null,
   user: null,
+  signup: async (signUpData: SignUpData): Promise<void> => {
+    try {
+      const response: AxiosResponse<AuthResponse> = await api.post(
+        `/auth/register`,
+        signUpData
+      );
+
+      const userData = response.data;
+      set({ user: { id: userData.id, profileImageUrl: "" } });
+      saveRefreshToken(userData.refreshToken);
+      saveAccessToken(userData.token);
+    } catch (error: unknown) {
+      // Handle authentication errors
+      if (axios.isAxiosError(error)) {
+        const err = error.response?.data.message;
+        throw new Error(err);
+      } else if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Unknown error occurred.");
+      }
+    }
+  },
   signIn: async (username: string, password: string): Promise<void> => {
     try {
-      // Make a POST request to your authentication endpoint using Axios
       const response: AxiosResponse<AuthResponse> = await api.post(
         `/auth/login`,
         {
@@ -84,6 +120,10 @@ const useAuth = create<useAuthStore>((set) => ({
         isAuthenticate: false,
       }));
     }
+  },
+  signOut: (): void => {
+    destroyRefreshToken();
+    destroyAccessToken();
   },
 }));
 

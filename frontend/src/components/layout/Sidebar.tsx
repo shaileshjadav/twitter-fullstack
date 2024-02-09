@@ -1,7 +1,7 @@
 import { BsHouseFill, BsBellFill } from "react-icons/bs";
 import { BiBadge, BiLogOut } from "react-icons/bi";
 import { FaUser } from "react-icons/fa";
-// import { signOut } from "next-auth/react";
+import { useNavigate } from "react-router-dom";
 
 import SidebarLogo from "./SidebarLogo";
 import SidebarItem from "./SidebarItem";
@@ -9,7 +9,8 @@ import SidebarItem from "./SidebarItem";
 import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, signOut } = useAuth();
+  const navigate = useNavigate();
   const items = [
     {
       label: "Home",
@@ -44,15 +45,16 @@ const Sidebar = () => {
               alert={item.alert}
             />
           ))}
-          {/* {currentUser && (
+          {currentUser && (
             <SidebarItem
               label="Logout"
               icon={BiLogOut}
               onClick={() => {
                 signOut();
+                navigate("/");
               }}
             />
-          )} */}
+          )}
           {/* <SidbarbarTweetButton /> */}
         </div>
       </div>

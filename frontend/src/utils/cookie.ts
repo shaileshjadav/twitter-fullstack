@@ -36,4 +36,5 @@ export const saveRefreshToken = (token: string) =>
 export const saveAccessToken = (token: string) =>
   setCookie(COOKIE_NAMES.accessToken, token);
 export const destroyRefreshToken = () => eraseCookie(COOKIE_NAMES.refreshToken);
+export const destroyAccessToken = () => eraseCookie(COOKIE_NAMES.accessToken);
 export const getRefreshToken = () => getCookie(COOKIE_NAMES.refreshToken);

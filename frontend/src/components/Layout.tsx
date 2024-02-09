@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import FollowBar from "./layout/FollowBar";
+// import FollowBar from "./layout/FollowBar";
 import Sidebar from "./layout/Sidebar";
 
 // interface LayoutProps {
