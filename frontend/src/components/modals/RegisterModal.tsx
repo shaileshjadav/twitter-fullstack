@@ -1,19 +1,19 @@
 import { useCallback, useState } from "react";
-
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { signIn } from "next-auth/react";
 
-import useLoginModal from "@/hooks/useLoginModal";
-import useRegisterModal from "@/hooks/useRegisterModal";
 import Input from "../Input";
 import Modal from "../Modal";
-import axios from "axios";
-import toast from "react-hot-toast";
+
+import useLoginModal from "../../hooks/useLoginModal";
+import useRegisterModal from "../../hooks/useRegisterModal";
+import useAuth from "../../hooks/useAuth";
 
 const RegisterModal = () => {
   const loginModal = useLoginModal();
   const registerModal = useRegisterModal();
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,27 +24,20 @@ const RegisterModal = () => {
   const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
+      await signup({ name, username: userName, email, password });
 
-      await axios.post("/api/register", {
-        email,
-        name,
-        username: userName,
-        password,
-      });
-      toast.success("Account created!");
-      signIn("credentials", {
-        email,
-        password,
-      });
-      registerModal.onClose();
+      loginModal.onClose();
       navigate("/home");
-    } catch (e) {
-      console.log(e);
-      toast.error("something went wrong!");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong!");
+      }
     } finally {
       setIsLoading(false);
     }
-  }, [email, name, userName, password, registerModal, navigate]);
+  }, [signup, name, userName, email, password, loginModal, navigate]);
 
   const onToggle = useCallback(() => {
     if (isLoading) {
