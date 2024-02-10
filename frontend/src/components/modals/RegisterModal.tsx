@@ -1,6 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import validator from "validator";
 
 import Input from "../Input";
 import Modal from "../Modal";
@@ -8,18 +9,75 @@ import Modal from "../Modal";
 import useLoginModal from "../../hooks/useLoginModal";
 import useRegisterModal from "../../hooks/useRegisterModal";
 import useAuth from "../../hooks/useAuth";
+import useDebounce from "../../hooks/useDebounce";
+import useCheckEmail from "../../hooks/useCheckEmail";
 
+interface ValidationFormErrors {
+  email?: string;
+}
 const RegisterModal = () => {
-  const loginModal = useLoginModal();
-  const registerModal = useRegisterModal();
-  const navigate = useNavigate();
-  const { signup } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<ValidationFormErrors>({});
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
+  const navigate = useNavigate();
+  const { signup } = useAuth();
+  const deboundedEmailVal = useDebounce(email, 3000);
+  const { checkEmail } = useCheckEmail();
+
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(e.target.value);
+      if (!validator.isEmail(e.target.value)) {
+        setFormErrors({ email: "Please enter valid email!" });
+      } else {
+        setFormErrors((prev) => ({ ...prev, email: "" }));
+      }
+    },
+    []
+  );
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    switch (e.target.name) {
+      case "name":
+        setName(e.target.value);
+        break;
+      case "username":
+        setUserName(e.target.value);
+        break;
+      case "password":
+        setPassword(e.target.value);
+        break;
+    }
+  }, []);
+  useEffect(() => {
+    if (!formErrors.email && password && userName && name) {
+      setIsFormValid(true);
+    } else {
+      setIsFormValid(false);
+    }
+  }, [email, password, userName, name, formErrors.email]);
+  useEffect(() => {
+    // check email is aready registerd when email is valid
+    const checkEmailAPI = async () => {
+      setIsLoading(true);
+      const result = await checkEmail(deboundedEmailVal);
+      if (result && result.isAlreadyExists) {
+        setFormErrors((prev) => ({
+          ...prev,
+          email: "Email is already registered!",
+        }));
+      }
+      setIsLoading(false);
+    };
+    if (deboundedEmailVal && email === deboundedEmailVal && !formErrors.email)
+      checkEmailAPI();
+  }, [checkEmail, deboundedEmailVal, email, formErrors.email]);
 
   const onSubmit = useCallback(async () => {
     try {
@@ -52,29 +110,33 @@ const RegisterModal = () => {
     <div className="flex flex-col gap-4">
       <Input
         placeholder="Email"
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleEmailChange}
         value={email}
         disabled={isLoading}
+        error={formErrors && formErrors.email}
       />
 
       <Input
         placeholder="Name"
-        onChange={(e) => setName(e.target.value)}
+        onChange={handleChange}
         value={name}
+        name="name"
         disabled={isLoading}
       />
 
       <Input
         placeholder="Username"
-        onChange={(e) => setUserName(e.target.value)}
+        onChange={handleChange}
         value={userName}
+        name="username"
         disabled={isLoading}
       />
 
       <Input
         placeholder="Password"
         type="password"
-        onChange={(e) => setPassword(e.target.value)}
+        name="password"
+        onChange={handleChange}
         value={password}
         disabled={isLoading}
       />
@@ -94,7 +156,7 @@ const RegisterModal = () => {
   );
   return (
     <Modal
-      disabled={isLoading}
+      disabled={isLoading || !isFormValid}
       isOpen={registerModal.isOpen}
       title="Create an account"
       actionLabel="Register"

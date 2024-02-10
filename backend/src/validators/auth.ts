@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 
 export const validateRegisterRequestBody = [
   body('name')
@@ -62,4 +62,8 @@ export const validateRefreshTokenequestBody = [
     .notEmpty()
     .withMessage('RefreshToken is required')
     .isString(),
+];
+
+export const validateCheckEmail = [
+  query('email').notEmpty().withMessage('email is required').isString(),
 ];

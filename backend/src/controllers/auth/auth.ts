@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   updateCurrentUser,
   refreshTokenService,
+  checkEmailService,
 } from '../../services/auth';
 import { generatePresignedUrl } from '../../helpers/awsHelper';
 
@@ -156,6 +157,26 @@ export const refreshTokenController = async (
       success({
         token: accessToken,
         refreshToken,
+      }),
+    );
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const checkEmail = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
+  const { email } = req.query as { email: string };
+
+  try {
+    const isAlreadyExists = await checkEmailService(email);
+
+    return res.status(200).json(
+      success({
+        isAlreadyExists: !!isAlreadyExists,
       }),
     );
   } catch (e) {

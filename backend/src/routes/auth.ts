@@ -7,11 +7,13 @@ import {
   getPresignedUrlForProfileImage,
   getPresignedUrlForCoverImage,
   refreshTokenController,
+  checkEmail,
 } from '../controllers/auth/auth';
 import {
   validateRegisterRequestBody,
   validateLoginRequestBody,
   validateRefreshTokenequestBody,
+  validateCheckEmail,
 } from '../validators/auth';
 import { validateRequest } from '../middleware/validateRequest';
 import authMiddleware from '../middleware/authMiddleware';
@@ -41,4 +43,5 @@ router.get(
   getPresignedUrlForCoverImage,
 );
 
+router.get('/checkEmail', validateRequest(validateCheckEmail), checkEmail);
 export default router;

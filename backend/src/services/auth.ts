@@ -211,3 +211,11 @@ export const refreshTokenService = async ({
   });
   return { accessToken, refreshToken };
 };
+
+export const checkEmailService = async (email: string) => {
+  return await prisma.user.findFirst({
+    where: {
+      email,
+    },
+  });
+};

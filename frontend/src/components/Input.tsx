@@ -1,9 +1,10 @@
-interface InputProps {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   value?: string;
   type?: string;
   disabled: boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -12,31 +13,38 @@ const Input: React.FC<InputProps> = ({
   type,
   disabled,
   onChange,
+  error,
+  ...props
 }) => {
   return (
-    <input
-      disabled={disabled}
-      onChange={onChange}
-      value={value}
-      placeholder={placeholder}
-      type={type}
-      className="
+    <div>
+      <input
+        disabled={disabled}
+        onChange={onChange}
+        value={value}
+        placeholder={placeholder}
+        type={type}
+        className="
         w-full
         p-4
         text-lg
         bg-black
-        border-neutral-800
+        border-0.5
+        border-gray-800
         rounded-md
         outline-none
         text-white
         focus:border-sky-500
-        focus:border-2
+        focus: border-2
         transition
         disabled:bg-neutral-900
         disabled:opacity-70
         disabled:cursor-not-allowed
       "
-    ></input>
+        {...props}
+      ></input>
+      {error && <span className="text-[#ff0000]">{error}</span>}
+    </div>
   );
 };
 
