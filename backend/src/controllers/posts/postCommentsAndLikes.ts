@@ -1,12 +1,13 @@
 import { Response, Request, NextFunction } from 'express';
 import { success } from '../../helpers/response';
-import { HttpStatusCode } from '../../config/constants';
+import { HttpStatusCode, kafkaTopics } from '../../config/constants';
 
 import {
   savePostComment,
   insertPostLike,
   deletePostLike,
 } from '../../services/postCommentAndLike';
+import { sendMessage } from './producer/postProducer';
 
 interface RegisterRequestBody {
   body: string;
@@ -53,7 +54,13 @@ export const savePostLikeController = async (
       postId,
       userId: req.userId,
     });
-
+    await sendMessage(
+      kafkaTopics.postLike,
+      kafkaTopics.postLike,
+      JSON.stringify({
+        text: 'Hello KafkaJS user!',
+      }),
+    );
     return res.status(HttpStatusCode.OK).json(success(insertedPostLike));
   } catch (e) {
     next(e);

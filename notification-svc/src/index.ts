@@ -1,25 +1,18 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import router from './routes';
+
 import { errorHandler } from './helpers/ErrorHandler';
 import errorMiddleware, { routeNotFound } from './middleware/errorMiddleware';
-import {
-  connect,
-  sendMessage,
-} from './controllers/posts/producer/postProducer';
-import { kafkaTopics } from './config/constants';
-
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 // middlewares
 app.use(cors());
 app.use(express.json());
 
-app.use(router);
 app.use(routeNotFound);
 app.use(errorMiddleware);
 
@@ -35,17 +28,7 @@ process.on('uncaughtException', (error: Error) => {
     process.exit(1);
   }
 });
-(async () => {
-  // connect kafka producer
-  await connect();
-  await sendMessage(
-    kafkaTopics.postLike,
-    kafkaTopics.postLike,
-    JSON.stringify({
-      text: 'Hello KafkaJS user!',
-    }),
-  );
-  app.listen(port, () => {
-    console.log(`[server]: Server is running at ${port}`);
-  });
-})();
+
+app.listen(port, () => {
+  console.log(`[server]: Server is running at ${port}`);
+});

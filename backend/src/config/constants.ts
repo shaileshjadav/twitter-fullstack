@@ -6,6 +6,11 @@ type AWSConfig = {
   bucket: string | undefined;
 };
 
+type KafkaConfig = {
+  clientId: string | undefined;
+  brokers: string | undefined;
+};
+
 export enum HttpStatusCode {
   OK = 200,
   BAD_REQUEST = 400,
@@ -23,4 +28,13 @@ export const AWSConfig: AWSConfig = {
   accessKeyId: process.env.AWS_ACCESSKEY,
   secretAccessKey: process.env.AWS_SECREATKEY,
   bucket: process.env.AWS_BUCKET,
+};
+
+export const kafkaConfig: KafkaConfig = {
+  clientId: process.env.APP_NAME,
+  brokers: process.env.KAFKA_BROKER,
+};
+
+export const kafkaTopics = {
+  postLike: 'postLike',
 };

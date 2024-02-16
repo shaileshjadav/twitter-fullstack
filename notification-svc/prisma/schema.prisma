@@ -1,0 +1,34 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model Event {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  eventCode String
+  eventName String
+  aggregationWindow Number?
+  
+  notifications notification[]
+}
+
+model Notification {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  receiverUserId String @db.ObjectId
+  eventId String @db.ObjectId
+  sourceId String @db.ObjectId
+  relatedEntities String[] @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  readAt DateTime?
+
+  event Event @relation(fields: [eventId], references: [id], onDelete:Cascade)
+}
