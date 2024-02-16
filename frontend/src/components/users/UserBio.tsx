@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useMemo } from "react";
 import Button from "../Button";
 import useEditModal from "../..//hooks/useEditModal";
-// import useFollow from "@/hooks/useFollow";
+import useFollow from "../../hooks/useFollow";
 import useAuth from "../../hooks/useAuth";
 
 interface UserBioProps {
@@ -14,15 +14,17 @@ interface UserBioProps {
     username: string;
     bio: string;
     createAt?: string;
-    followingIds: unknown;
-    followersCount: unknown;
+    isFollowing: boolean;
+    followersCount?: number;
+    followingCount?: number;
   };
 }
 const UserBio: React.FC<UserBioProps> = ({ userId, userData }) => {
   const { user: currentUser } = useAuth();
 
   const editModal = useEditModal();
-  // const { isFollowing, toggleFollow } = useFollow(userId);
+  const { toggleFollow } = useFollow(userId);
+
   const createAt = useMemo(() => {
     if (!userData?.createAt) {
       return null;
@@ -38,11 +40,10 @@ const UserBio: React.FC<UserBioProps> = ({ userId, userData }) => {
           <Button secondary label="Edit Profile" onClick={editModal.onOpen} />
         ) : (
           <Button
-            label="Follow"
-            // label={isFollowing ? "Unfollow" : "Follow"}
-            // onClick={toggleFollow}
-            // secondary={!isFollowing}
-            // outline={isFollowing}
+            label={userData.isFollowing ? "Unfollow" : "Follow"}
+            onClick={() => toggleFollow(userData.isFollowing)}
+            secondary={!userData.isFollowing}
+            outline={userData.isFollowing}
           />
         )}
       </div>
@@ -70,11 +71,11 @@ const UserBio: React.FC<UserBioProps> = ({ userId, userData }) => {
         </div>
         <div className="flex flex-row items-center mt-4 gap-6">
           <div className="flex flex-row items-center gap-1">
-            <p className="text-white">{userData?.followingIds?.length}</p>
+            <p className="text-white">{userData.followingCount}</p>
             <p className="text-neutral-500">Following</p>
           </div>
           <div className="flex flex-row items-center gap-1">
-            <p className="text-white">{userData?.followersCount || 0}</p>
+            <p className="text-white">{userData.followersCount}</p>
             <p className="text-neutral-500">Followers</p>
           </div>
         </div>

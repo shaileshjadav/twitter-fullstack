@@ -129,7 +129,6 @@ export const generatePresignedUrlController = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    console.log('SFDFF');
     const userId = req.userId;
     const filePath = `media/${uuidv4()}.png`;
     const url = await generatePresignedUrl(userId, filePath);
