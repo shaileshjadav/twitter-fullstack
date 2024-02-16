@@ -7,10 +7,12 @@ import UserBio from "../components/users/UserBio";
 import UserHero from "../components/users/UserHero";
 import useUser from "../hooks/useUser";
 import EditModal from "../components/modals/EditModal";
+import useAuth from "../hooks/useAuth";
 
 const User: React.FC = () => {
   const { userId } = useParams();
   const { data: userData, isLoading } = useUser(userId);
+  const { user: currentUser } = useAuth();
   return (
     <>
       {isLoading && (
@@ -28,7 +30,7 @@ const User: React.FC = () => {
           />
           <UserBio userId={userId as string} userData={userData} />
           <PostFeed userId={userId as string} />
-          <EditModal />
+          {currentUser?.id === userId && <EditModal />}
         </>
       )}
     </>

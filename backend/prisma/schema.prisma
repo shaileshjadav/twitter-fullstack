@@ -23,14 +23,14 @@ model User {
   hashedPassword String?
   createAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  followingIds String[] @db.ObjectId
   hasNotification Boolean?
 
   posts Post[]
   comments Comment[]
   likedPosts Like[]
   notifications Notification[]
-
+  followers Follow[] @relation(name: "following")
+  following Follow[] @relation(name: "follower")
 }
 
 model Post {
@@ -76,4 +76,16 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete:Cascade)
+}
+
+model Follow {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  followerId String @db.ObjectId
+  followingId String @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  follower User @relation(fields: [followerId], references: [id], onDelete:Cascade, name: "follower")
+  following User @relation(fields: [followingId], references: [id], onDelete:Cascade, name: "following")
+  
 }

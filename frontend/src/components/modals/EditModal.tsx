@@ -86,7 +86,6 @@ const EditModal = () => {
       onClose();
     }
   }, [isSuccess, onClose]);
-
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <ImageUpload

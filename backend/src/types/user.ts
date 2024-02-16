@@ -1,5 +1,13 @@
 type optionalField = string | null;
 
+export interface followsUserId {
+  id: string;
+  followerId: string;
+  followingId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface User {
   id: string;
   name?: optionalField;
@@ -11,6 +19,11 @@ export interface User {
   coverImage?: optionalField;
   profileImage?: optionalField;
   profileImageUrl?: optionalField;
+  followers?: followsUserId[];
+  following?: followsUserId[];
+  isFollowing?: boolean;
+  followersCount?: number;
+  followingCount?: number;
 }
 
 export interface AuthUser {
