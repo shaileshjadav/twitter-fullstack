@@ -123,3 +123,11 @@ export const getSinglePost = async (
     },
   });
 };
+
+export const getPostById = async (postId: string): Promise<Post | null> => {
+  return await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+};

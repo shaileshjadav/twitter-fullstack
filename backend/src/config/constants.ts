@@ -36,5 +36,5 @@ export const kafkaConfig: KafkaConfig = {
 };
 
 export const kafkaTopics = {
-  postLike: 'postLike',
+  post: 'post',
 };

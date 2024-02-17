@@ -1,3 +1,4 @@
+import { kafkaTopics } from '../../../config/constants';
 import kafkaClient from '../../../libs/kafka';
 import { Producer } from 'kafkajs';
 
@@ -15,17 +16,16 @@ export const disconnect = async () => {
 };
 
 export const sendMessage = async (
-  topic: string,
-  key: string,
   message: string | Buffer | null,
+  key: string,
 ) => {
   if (producer) {
     await producer.send({
-      topic: topic,
+      topic: kafkaTopics.post,
       messages: [
         {
           //   partition: 0,
-          //   key: key,
+          key: key,
           value: message,
         },
       ],

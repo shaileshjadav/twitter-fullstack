@@ -4,11 +4,7 @@ import cors from 'cors';
 import router from './routes';
 import { errorHandler } from './helpers/ErrorHandler';
 import errorMiddleware, { routeNotFound } from './middleware/errorMiddleware';
-import {
-  connect,
-  sendMessage,
-} from './controllers/posts/producer/postProducer';
-import { kafkaTopics } from './config/constants';
+import { connect } from './controllers/posts/queue/postQueue';
 
 dotenv.config();
 
@@ -38,13 +34,6 @@ process.on('uncaughtException', (error: Error) => {
 (async () => {
   // connect kafka producer
   await connect();
-  await sendMessage(
-    kafkaTopics.postLike,
-    kafkaTopics.postLike,
-    JSON.stringify({
-      text: 'Hello KafkaJS user!',
-    }),
-  );
   app.listen(port, () => {
     console.log(`[server]: Server is running at ${port}`);
   });

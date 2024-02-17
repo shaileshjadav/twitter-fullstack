@@ -15,9 +15,9 @@ model Event {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   eventCode String
   eventName String
-  aggregationWindow Number?
+  aggregationWindow Int?
   
-  notifications notification[]
+  notifications Notification[]
 }
 
 model Notification {

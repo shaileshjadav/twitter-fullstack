@@ -1,13 +1,15 @@
 import { Response, Request, NextFunction } from 'express';
 import { success } from '../../helpers/response';
-import { HttpStatusCode, kafkaTopics } from '../../config/constants';
+import { HttpStatusCode } from '../../config/constants';
 
 import {
   savePostComment,
   insertPostLike,
   deletePostLike,
 } from '../../services/postCommentAndLike';
-import { sendMessage } from './producer/postProducer';
+import { sendMessage } from './queue/postQueue';
+import { getPostById } from '../../services/post';
+import BaseError from '../../helpers/BaseError';
 
 interface RegisterRequestBody {
   body: string;
@@ -49,17 +51,26 @@ export const savePostLikeController = async (
   const params = req.params as unknown;
   try {
     const { postId } = params as SavePostLikeParams;
-
+    const post = await getPostById(postId);
+    if (!post) {
+      throw new BaseError(
+        'invalid postId',
+        HttpStatusCode.NOT_FOUND,
+        'invalid post Id',
+      );
+    }
     const insertedPostLike = await insertPostLike({
       postId,
       userId: req.userId,
     });
     await sendMessage(
-      kafkaTopics.postLike,
-      kafkaTopics.postLike,
       JSON.stringify({
-        text: 'Hello KafkaJS user!',
+        sourceId: postId,
+        receiverUserId: post.userId,
+        eventCode: 'post_like',
+        relatedEntities: req.userId,
       }),
+      postId,
     );
     return res.status(HttpStatusCode.OK).json(success(insertedPostLike));
   } catch (e) {
