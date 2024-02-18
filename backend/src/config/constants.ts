@@ -38,3 +38,7 @@ export const kafkaConfig: KafkaConfig = {
 export const kafkaTopics = {
   post: 'post',
 };
+
+export const eventCodes = {
+  postLike: 'postLike',
+};

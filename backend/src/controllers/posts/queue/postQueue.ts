@@ -30,5 +30,6 @@ export const sendMessage = async (
         },
       ],
     });
+    console.log('queue message successful sent', message);
   }
 };

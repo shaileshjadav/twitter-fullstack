@@ -6,7 +6,7 @@ dotenv.config();
 
 import { errorHandler } from './helpers/ErrorHandler';
 import errorMiddleware, { routeNotFound } from './middleware/errorMiddleware';
-import run from './controllers/notifications/consumer/notificationConsumer';
+import run from './controllers/notifications/queue/notificationQueue';
 
 const app: Express = express();
 const port = process.env.PORT || 3001;

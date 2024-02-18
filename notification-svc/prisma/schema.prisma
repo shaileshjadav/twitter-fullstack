@@ -10,13 +10,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RelatedEntitiesType {
+  post
+  user
+}
 
 model Event {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   eventCode String
   eventName String
   aggregationWindow Int?
-  
+  relatedEntitiesType RelatedEntitiesType
   notifications Notification[]
 }
 

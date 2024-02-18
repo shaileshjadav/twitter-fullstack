@@ -1,7 +1,12 @@
 import { kafkaTopics } from '../../../config/constants';
 import kafkaClient from '../../../libs/kafka';
 import { Consumer } from 'kafkajs';
+import { createNotification } from '../notification.controller';
+import { CreateNotification } from '../../../types';
 
+interface QueuePayload extends CreateNotification {
+  eventCode: string;
+}
 const run = async () => {
   const consumer: Consumer = kafkaClient.consumer({
     groupId: 'post-group',
@@ -10,7 +15,7 @@ const run = async () => {
   await consumer.connect();
 
   await consumer.subscribe({
-    topics: [kafkaTopics.postLike],
+    topics: [kafkaTopics.post],
     fromBeginning: true,
   });
 
@@ -19,6 +24,15 @@ const run = async () => {
       console.log(`topic = ${topic}, partition =${partition}`);
       console.log('MESSAGE', message.value?.toString());
       console.log('MESSAGE KEY', message?.key?.toString());
+      const messageValue = message.value?.toString();
+      console.log(messageValue);
+      if (messageValue) {
+        const messageData = JSON.parse(messageValue) as QueuePayload;
+        console.log(messageData);
+        createNotification(messageData.eventCode, {
+          ...messageData,
+        });
+      }
     },
   });
 };

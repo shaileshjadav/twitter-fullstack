@@ -1,3 +1,5 @@
+import { RelatedEntitiesTypeEnum } from '../types';
+
 type KafkaConfig = {
   clientId: string | undefined;
   brokers: string | undefined;
@@ -17,5 +19,10 @@ export const kafkaConfig: KafkaConfig = {
 };
 
 export const kafkaTopics = {
-  postLike: 'postLike',
+  post: 'post',
+};
+
+export const relatedEntitiesType: RelatedEntitiesTypeEnum = {
+  post: 'post',
+  user: 'user',
 };

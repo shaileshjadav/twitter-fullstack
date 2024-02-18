@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 import { success } from '../../helpers/response';
-import { HttpStatusCode } from '../../config/constants';
+import { HttpStatusCode, eventCodes } from '../../config/constants';
 
 import {
   savePostComment,
@@ -59,6 +59,7 @@ export const savePostLikeController = async (
         'invalid post Id',
       );
     }
+    console.log('post like saving');
     const insertedPostLike = await insertPostLike({
       postId,
       userId: req.userId,
@@ -67,8 +68,8 @@ export const savePostLikeController = async (
       JSON.stringify({
         sourceId: postId,
         receiverUserId: post.userId,
-        eventCode: 'post_like',
-        relatedEntities: req.userId,
+        eventCode: eventCodes.postLike,
+        relatedEntities: [req.userId],
       }),
       postId,
     );
