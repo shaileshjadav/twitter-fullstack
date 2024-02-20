@@ -55,6 +55,7 @@ export const createPost = async ({
 export const getPost = async (
   limit: number,
   offset: number,
+  currentuserId: string,
   userId?: string,
 ): Promise<Post[]> => {
   return await prisma.post.findMany({
@@ -80,7 +81,7 @@ export const getPost = async (
       },
       likes: {
         where: {
-          userId,
+          userId: currentuserId,
         },
       },
     },

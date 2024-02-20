@@ -53,8 +53,9 @@ export const getPostController = async (
     const { page, userId } = queryParams;
     const awsBaseURL = getAWSBaseURL();
     const offset = (page - 1) * POSTS_PER_PAGE;
+    const currentuserId = req.userId;
+    const posts = await getPost(POSTS_PER_PAGE, offset, currentuserId, userId);
 
-    const posts = await getPost(POSTS_PER_PAGE, offset, userId);
     const response = posts.map(post => {
       const hasLiked = post.likes && post.likes.length > 0;
       // user profile imageURL

@@ -95,11 +95,7 @@ const apiSecure = () => {
         });
     }
   );
-
   return axiosInstance;
 };
-
-const axios = <T>(cfg: AxiosRequestConfig, instance: AxiosInstance) =>
-  instance.request<unknown, T>(cfg);
 
 export default apiSecure();
