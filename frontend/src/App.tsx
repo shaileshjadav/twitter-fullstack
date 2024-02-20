@@ -3,7 +3,7 @@ import AppRoutes from "./AppRoutes";
 
 
 function App(): JSX.Element {
- 
+
 
   return (
     <>

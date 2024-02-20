@@ -28,6 +28,7 @@ interface useAuthStore {
   fetchCurrentUser: () => Promise<void>;
   signOut: () => void;
 }
+
 interface AuthResponse {
   email: string;
   id: string;
