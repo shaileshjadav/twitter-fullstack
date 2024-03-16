@@ -2,8 +2,14 @@ import { Response, Request, NextFunction } from 'express';
 import { error, success } from '../../helpers/response';
 import { HttpStatusCode } from '../../config/constants';
 
-import { getUserById, follow, removeFollow } from '../../services/user';
+import {
+  getUserById,
+  follow,
+  removeFollow,
+  getUsersByIds,
+} from '../../services/user';
 import { getAWSBaseURL } from '../../helpers/awsHelper';
+import BaseError from '../../helpers/BaseError';
 
 interface getUserParams {
   userId: string;
@@ -89,6 +95,29 @@ export const removeFollowController = async (
   try {
     await removeFollow(followerId, followingId);
     return res.status(HttpStatusCode.OK).json(success());
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getUsersByIdsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userIds } = req.body as { userIds: string[] };
+    console.log(userIds);
+    const users = await getUsersByIds(userIds);
+    console.log(users);
+    if (!users?.length) {
+      throw new BaseError(
+        'invalid_userIds',
+        HttpStatusCode.BAD_REQUEST,
+        'invalid user ids for get info',
+      );
+    }
+    return res.status(HttpStatusCode.OK).json(success(users));
   } catch (e) {
     next(e);
   }

@@ -1,4 +1,5 @@
 import { RelatedEntitiesTypeEnum } from '../types';
+import { Secret } from 'jsonwebtoken';
 
 type KafkaConfig = {
   clientId: string | undefined;
@@ -25,4 +26,10 @@ export const kafkaTopics = {
 export const relatedEntitiesType: RelatedEntitiesTypeEnum = {
   post: 'post',
   user: 'user',
+};
+
+export const JWTSECRET: Secret | undefined = process.env.JWT_SECRET;
+
+export const notificationTemplates: Record<string, string> = {
+  postLike: '{username} liked your post!',
 };

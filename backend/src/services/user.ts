@@ -70,3 +70,25 @@ export const removeFollow = async (
   });
   return true;
 };
+
+export const getUsersByIds = async (
+  userIds: string[],
+): Promise<User[] | null> => {
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      emailVerified: true,
+      bio: true,
+      email: true,
+      image: true,
+      coverImage: true,
+      profileImage: true,
+      createAt: true,
+    },
+    where: {
+      id: { in: userIds },
+    },
+  });
+};

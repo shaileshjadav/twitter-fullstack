@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export type RelatedEntitiesTypeEnum = {
   post: string;
   user: string;
@@ -29,4 +31,25 @@ export interface CreateNotification {
   eventId: string;
   sourceId: string;
   relatedEntities: string[];
+}
+
+export interface parseMessageData {
+  notification: {
+    sourceId: string;
+    relatedEntities: string[];
+    updatedAt: Date;
+    readAt: Date | null;
+    event: {
+      eventCode: string;
+      relatedEntitiesType: RelatedEntitiesType;
+    };
+  };
+  users: Record<string, User>;
+}
+export interface parsedNotification {
+  updatedAt: Date;
+  readAt: Date | null;
+  message: string;
+  redirects?: string;
+  avatar?: string | null;
 }
