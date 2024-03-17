@@ -35,6 +35,7 @@ export interface CreateNotification {
 
 export interface parseMessageData {
   notification: {
+    id: string;
     sourceId: string;
     relatedEntities: string[];
     updatedAt: Date;
@@ -47,9 +48,11 @@ export interface parseMessageData {
   users: Record<string, User>;
 }
 export interface parsedNotification {
+  id: string;
   updatedAt: Date;
   readAt: Date | null;
   message: string;
   redirects?: string;
+  notificationEventCode: string;
   avatar?: string | null;
 }

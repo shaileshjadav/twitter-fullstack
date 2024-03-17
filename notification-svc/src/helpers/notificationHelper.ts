@@ -23,10 +23,12 @@ const formatPostLike = ({
   notificationMessage += ' liked your post';
   const firstUserId = usersLiked[0];
   return {
+    id: notification.id,
     readAt: notification.readAt,
     updatedAt: notification.updatedAt,
     message: notificationMessage,
-    redirects: `/post/${notification.sourceId}`,
+    redirects: `/posts/${notification.sourceId}`,
+    notificationEventCode: notification.event.eventCode,
     avatar: users[firstUserId]?.profileImageUrl || null,
   };
 };

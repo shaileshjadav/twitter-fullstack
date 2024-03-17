@@ -5,6 +5,7 @@ import RequiredAuth from "./RequiredAuth";
 import Layout from "./components/Layout";
 import Post from "./pages/Post";
 import User from "./pages/User";
+import Notifications from "./pages/Notifications";
 
 function AppRoutes(): JSX.Element {
   return (
@@ -16,6 +17,7 @@ function AppRoutes(): JSX.Element {
           <Route path="/home" element={<Home />} />
           <Route path="/posts/:postId" element={<Post />} />
           <Route path="/user/:userId" element={<User />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
       </Route>
     </Routes>

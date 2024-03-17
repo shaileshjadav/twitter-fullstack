@@ -9,6 +9,12 @@ const main = async () => {
         relatedEntitiesType: 'user',
         aggregationWindow: 10,
       },
+      {
+        eventCode: 'userFollow',
+        eventName: 'User followed',
+        relatedEntitiesType: 'user',
+        aggregationWindow: 10,
+      },
     ],
   });
 };

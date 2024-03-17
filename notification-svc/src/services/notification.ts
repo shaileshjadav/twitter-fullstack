@@ -69,6 +69,7 @@ export const getUserNotifications = async (
   const formatedNotifications: parsedNotification[] = [];
   const userNotifications = await prisma.notification.findMany({
     select: {
+      id: true,
       sourceId: true,
       relatedEntities: true,
       readAt: true,

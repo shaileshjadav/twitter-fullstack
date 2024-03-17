@@ -5,6 +5,7 @@ export const QUERY_KEYS = {
   post: "post",
   user: "user",
   checkEmail: "checkEmail",
+  notifications: "notifications",
 };
 
 export const COOKIE_NAMES = {

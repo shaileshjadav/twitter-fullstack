@@ -59,7 +59,7 @@ export const savePostLikeController = async (
         'invalid post Id',
       );
     }
-    console.log('post like saving');
+
     const insertedPostLike = await insertPostLike({
       postId,
       userId: req.userId,
