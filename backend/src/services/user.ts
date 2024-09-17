@@ -1,4 +1,5 @@
-import { HttpStatusCode } from '../config/constants';
+import { HttpStatusCode, eventCodes } from '../config/constants';
+import { sendMessage } from '../controllers/posts/queue/postQueue';
 import BaseError from '../helpers/BaseError';
 import { prisma } from '../libs/database';
 import { User } from '../types';
@@ -54,6 +55,16 @@ export const follow = async (
       followingId,
     },
   });
+
+  await sendMessage(
+    JSON.stringify({
+      sourceId: followerId,
+      receiverUserId: followingId,
+      eventCode: eventCodes.userFollow,
+      relatedEntities: [followerId],
+    }),
+    followingId,
+  );
   return true;
 };
 

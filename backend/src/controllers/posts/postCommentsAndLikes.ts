@@ -64,15 +64,17 @@ export const savePostLikeController = async (
       postId,
       userId: req.userId,
     });
-    await sendMessage(
-      JSON.stringify({
-        sourceId: postId,
-        receiverUserId: post.userId,
-        eventCode: eventCodes.postLike,
-        relatedEntities: [req.userId],
-      }),
-      postId,
-    );
+    if (req.userId !== post.userId) {
+      await sendMessage(
+        JSON.stringify({
+          sourceId: postId,
+          receiverUserId: post.userId,
+          eventCode: eventCodes.postLike,
+          relatedEntities: [req.userId],
+        }),
+        postId,
+      );
+    }
     return res.status(HttpStatusCode.OK).json(success(insertedPostLike));
   } catch (e) {
     next(e);

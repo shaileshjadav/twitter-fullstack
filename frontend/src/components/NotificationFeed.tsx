@@ -1,7 +1,7 @@
 import { ClipLoader } from "react-spinners";
 import { ReactElement, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { AiFillHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineUser } from "react-icons/ai";
 
 import useNotifications from "../hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
@@ -29,6 +29,7 @@ const NotificationFeed = () => {
   );
   const notificationIconsMapping: Record<string, ReactElement> = {
     postLike: <AiFillHeart color="red" size="32" />,
+    userFollow: <AiOutlineUser size="32" color="white" />,
   };
 
   if (isLoading) {

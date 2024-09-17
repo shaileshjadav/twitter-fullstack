@@ -85,12 +85,12 @@ export const getUserNotifications = async (
       receiverUserId: userId,
     },
   });
+
   const userIds: string[] = [];
   userNotifications.forEach(notification => {
     if (notification.event.relatedEntitiesType == relatedEntitiesType.user) {
       // userIds.push(notification.relatedEntities);
       notification.relatedEntities.forEach(relatedEntity => {
-        console.log(relatedEntity);
         if (userIds.indexOf(relatedEntity) === -1) {
           userIds.push(relatedEntity);
         }
