@@ -1,24 +1,28 @@
-// import useUser from "@/hooks/useUser";
-// import { useRouter } from "next/router";
-import { useCallback } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { useCallback, MouseEvent } from "react";
+import imagePlaceHolder from "../assets/images/placeholder.png";
 interface AvatarProps {
   userId: string;
+  imageUrl?: string;
   isLarge?: boolean;
   hasBorder?: boolean;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
-  // const { data: fetchedUser } = useUser(userId);
-  // const router = useRouter();
-  // const onClick = useCallback(
-  //   (event: any) => {
-  //     event.stopPropagation;
-  //     const url = `/users/${userId}`;
-  //     router.push(url);
-  //   },
-  //   [router, userId]
-  // );
+const Avatar: React.FC<AvatarProps> = ({
+  userId,
+  imageUrl = "",
+  isLarge,
+  hasBorder,
+}) => {
+  const navigate = useNavigate();
+  const onClick = useCallback(
+    (event: MouseEvent<HTMLImageElement>) => {
+      event.stopPropagation;
+      const url = `/user/${userId}`;
+      navigate(url);
+    },
+    [navigate, userId]
+  );
   return (
     <div
       className={`
@@ -33,12 +37,10 @@ const Avatar: React.FC<AvatarProps> = ({ userId, isLarge, hasBorder }) => {
 `}
     >
       <img
-        fill
-        style={{ objectFit: "cover", borderRadius: "100%" }}
+        className="h-full w-full rounded-full object-cover object-center"
         alt="Avatar"
-        // onClick={onClick}
-        // src={fetchedUser?.profileImage || "/images/placeholder.png"}
-        src={"/images/placeholder.png"}
+        onClick={onClick}
+        src={imageUrl || imagePlaceHolder}
       />
     </div>
   );

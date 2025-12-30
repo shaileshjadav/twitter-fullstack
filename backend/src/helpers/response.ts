@@ -2,7 +2,7 @@ interface SuccessResponse {
   message: string;
   error: false;
   code: number;
-  data: object | [];
+  data?: object | [];
 }
 
 interface ErrorResponse {
@@ -19,7 +19,7 @@ interface ValidationResponse {
 }
 
 export const success = (
-  results: object | [],
+  results?: object | [],
   message: string = 'success',
   statusCode: number = 200,
 ): SuccessResponse => {

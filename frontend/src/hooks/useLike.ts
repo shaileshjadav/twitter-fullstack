@@ -1,52 +1,87 @@
-// import { useCallback, useMemo } from "react";
-// import useCurrentUser from "./useCurrentUser";
-// import usePost from "./usePost";
-// import usePosts from "./usePosts";
-// import useLoginModal from "./useLoginModal";
-// import toast from "react-hot-toast";
-// import axios from "axios";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
 
-// const useLike = ({ postId, userId }: { postId: string; userId: string }) => {
-//   const { data: currentUser } = useCurrentUser();
-//   const { data: fetchedPost, mutate: mutateFetchedPost } = usePost(postId);
-//   const { mutate: mutateFetchedPosts } = usePosts(userId);
+import apiSecure from "../libs/axios";
+import reactQueryClient from "../libs/reactQuery";
+import { QUERY_KEYS } from "../constants";
 
-//   const loginModal = useLoginModal();
+interface Post {
+  id: string;
+  body: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  hasLiked?: boolean;
+  _count: {
+    likes: number;
+  };
+}
+interface allData {
+  pages: Post[][];
+}
+const useLike = ({ postId }: { postId: string }) => {
+  const toggleLike = useCallback(
+    async (isAlreadyLiked: boolean) => {
+      try {
+        let request;
+        if (isAlreadyLiked) {
+          request = () => apiSecure.delete(`likes/${postId}`);
+        } else {
+          request = () => apiSecure.put(`likes/${postId}`);
+        }
+        const insertedLike = await request();
 
-//   const hasLiked = useMemo(() => {
-//     const list = fetchedPost?.likedIds || [];
+        return { isAlreadyLiked, insertedLike };
+      } catch (error) {
+        console.log(error);
+        toast.error("something went wrong");
+        // throw Error(e);
+      }
+    },
+    [postId]
+  );
+  const updateData = (data: allData) => {
+    return {
+      ...data,
+      pages: data.pages.map((page) =>
+        page.map((post: Post) =>
+          post.id === postId
+            ? {
+                ...post,
+                _count: {
+                  likes: post.hasLiked
+                    ? post._count.likes - 1 // Decrement like if already liked
+                    : post._count.likes + 1,
+                },
+                hasLiked: !post.hasLiked,
+              }
+            : post
+        )
+      ),
+    };
+  };
+  const mutation = useMutation({
+    mutationFn: (isAlreadyLiked: boolean) => toggleLike(isAlreadyLiked),
+    onSuccess: () => {
+      const singlePostMutationKey = `${QUERY_KEYS.post}/${postId}`;
+      reactQueryClient.invalidateQueries({
+        queryKey: [singlePostMutationKey],
+      });
+      // post listing
+      const mutationKey = QUERY_KEYS.posts;
 
-//     return list.includes(currentUser?.id);
-//   }, [fetchedPost?.likedIds, currentUser?.id]);
-
-//   const toggleLike = useCallback(async () => {
-//     if (!currentUser) {
-//       return loginModal.onOpen();
-//     }
-//     try {
-//       let request;
-//       if (hasLiked) {
-//         request = () => axios.delete("/api/like", { data: { postId } });
-//       } else {
-//         request = () => axios.post("/api/like", { postId });
-//       }
-//       await request();
-
-//       mutateFetchedPost();
-//       mutateFetchedPosts();
-
-//       toast.success("Success");
-//     } catch (error) {
-//       toast.error("something went wrong");
-//     }
-//   }, [
-//     currentUser,
-//     hasLiked,
-//     loginModal,
-//     mutateFetchedPost,
-//     mutateFetchedPosts,
-//     postId,
-//   ]);
-//   return { hasLiked, toggleLike };
-// };
-// export default useLike;
+      reactQueryClient.setQueryData<allData | undefined>(
+        [mutationKey],
+        (data) => updateData(data as allData)
+      );
+    },
+  });
+  return {
+    toggleLike: mutation.mutate,
+    isLoading: mutation.isPending,
+    isSuccess: mutation.isSuccess,
+    isError: mutation.isError,
+  };
+};
+export default useLike;

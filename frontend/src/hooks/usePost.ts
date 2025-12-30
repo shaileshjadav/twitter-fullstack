@@ -1,28 +1,64 @@
-// import fetcher from "@/libs/fetcher";
-// import useSWR from "swr";
-
-// const usePost = (postId: string) => {
-//   const url = `/api/posts/${postId}`;
-//   const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-//   return { data, error, isLoading, mutate };
-// };
-// export default usePost;
-
-import { useQuery } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import apiSecure from "../libs/axios";
+import reactQueryClient from "../libs/reactQuery";
+import { QUERY_KEYS } from "../constants";
+import useAwsUpload from "../hooks/useAwsUpload";
 
-const usePosts = (userId?: string) => {
-  const page = 1;
-  const url = userId
-    ? `/posts?userId=${userId}?page=${page}`
-    : `/posts?page=${page}`;
-
-  const fetchPost = async () => {
-    const result = await apiSecure.get(url);
-    return result.data;
+interface CreatePostData {
+  body: string;
+  isComment?: boolean;
+  image?: string | null;
+}
+const usePost = (postId: string) => {
+  const { uploadObject, generatePresignedUrl } = useAwsUpload();
+  const addPost = async (postData: CreatePostData) => {
+    const { isComment, image } = postData;
+    if (isComment) {
+      delete postData.isComment;
+    }
+    try {
+      if (image) {
+        const { presigneUrl, filePath } = await generatePresignedUrl(
+          `posts/presignedurl`
+        );
+        await uploadObject(presigneUrl, image);
+        postData.image = filePath;
+      }
+      const url = isComment ? `/comments?postId=${postId}` : `/posts`;
+      return await apiSecure.post(url, postData);
+    } catch (e) {
+      console.log(e);
+      throw Error(e);
+    }
   };
-  const { data, error, isLoading } = useQuery("postsData", fetchPost);
-  const responseData = data.data;
-  return { data: responseData, error, isLoading };
+
+  const mutation = useMutation({
+    mutationFn: (postData: CreatePostData) => addPost(postData),
+    onSuccess: () => {
+      const mutationKey = postId
+        ? `${QUERY_KEYS.post}/${postId}`
+        : QUERY_KEYS.posts;
+      reactQueryClient.invalidateQueries({
+        queryKey: [mutationKey],
+      });
+    },
+  });
+
+  return {
+    submitPost: mutation.mutate,
+    isLoading: mutation.isPending,
+    isSuccess: mutation.isSuccess,
+    isError: mutation.isError,
+  };
+
+  // const url = `/posts/${postId}`;
+
+  // const fetchPost = async () => {
+  //   const result = await apiSecure.get(url);
+  //   return result.data;
+  // };
+  // const { data, error, isLoading } = useQuery("post", fetchPost);
+  // const responseData = data;
+  // return { data: responseData, error, isLoading };
 };
-export default usePosts;
+export default usePost;

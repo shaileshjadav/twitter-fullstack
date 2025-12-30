@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 import { formatDistanceToNowStrict } from "date-fns";
 import Avatar from "../Avatar";
 
@@ -7,14 +7,14 @@ interface CommentItemPros {
   data: Record<string, any>;
 }
 const CommentItem: React.FC<CommentItemPros> = ({ data }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const goToUser = useCallback(
-    (event: any) => {
+    (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
-      router.push(`/users/${data.user.id}`);
+      navigate(`/user/${data.user.id}`);
     },
-    [data.user.id, router]
+    [data.user.id, navigate]
   );
 
   const createdAt = useMemo(() => {
@@ -23,11 +23,10 @@ const CommentItem: React.FC<CommentItemPros> = ({ data }) => {
     }
     return formatDistanceToNowStrict(new Date(data?.createdAt));
   }, [data?.createdAt]);
-
   return (
     <div className="border-b-[1px] border-neutral-800 p-5 cursor-pointer hover:bg-neutral-900 transition">
       <div className="flex flex-row items-start gap-3">
-        <Avatar userId={data.user.id} />
+        <Avatar userId={data.user.id} imageUrl={data.user.profileImageUrl} />
         <div>
           <div className="flex flex-row items-center gap-2">
             <p

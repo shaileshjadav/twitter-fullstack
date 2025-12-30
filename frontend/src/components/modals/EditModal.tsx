@@ -1,81 +1,102 @@
-import useCurrentUser from "@/hooks/useCurrentUser";
-import useEditModal from "@/hooks/useEditModal";
-import useUser from "@/hooks/useUser";
-import axios from "axios";
+import useEditModal from "../../hooks/useEditModal";
+
 import { useCallback, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+
 import Modal from "../Modal";
 import Input from "../Input";
 import ImageUpload from "../ImageUpload";
+import useAuth from "../../hooks/useAuth";
+import useUser from "../../hooks/useUser";
+import useUpdateProfile from "../../hooks/useUpdateProfile";
+import useAwsUpload from "../../hooks/useAwsUpload";
 
 const EditModal = () => {
-  const { data: currentUser } = useCurrentUser();
-  const { mutate: mutateFetchedUser } = useUser(currentUser?.id);
+  const { user: currentUser } = useAuth();
+  const { data: currentUserData } = useUser(currentUser?.id);
+  const { updateProfile, isLoading, isSuccess } = useUpdateProfile(
+    currentUser?.id
+  );
+  const { uploadObject, generatePresignedUrl } = useAwsUpload();
   const editModal = useEditModal();
+  const { onClose } = editModal;
 
   const [profileImage, setProfileImage] = useState("");
   const [coverImage, setCoverImage] = useState("");
   const [bio, setBio] = useState("");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setProfileImage(currentUser?.profileImage);
-    setCoverImage(currentUser?.coverImage);
-    setBio(currentUser?.bio);
-    setName(currentUser?.name);
-    setUsername(currentUser?.username);
+    setProfileImage(currentUserData?.profileImage);
+    setCoverImage(currentUserData?.coverImage);
+    setBio(currentUserData?.bio);
+    setName(currentUserData?.name);
+    setUsername(currentUserData?.username);
   }, [
-    currentUser?.profileImage,
-    currentUser?.coverImage,
-    currentUser?.bio,
-    currentUser?.name,
-    currentUser?.username,
+    currentUserData?.profileImage,
+    currentUserData?.coverImage,
+    currentUserData?.bio,
+    currentUserData?.name,
+    currentUserData?.username,
   ]);
 
   const onSubmit = useCallback(async () => {
-    try {
-      setIsLoading(true);
+    let profileImageKeyPath = currentUserData?.profileImage || null;
 
-      await axios.patch("/api/edit", {
-        name,
-        username,
-        profileImage,
-        coverImage,
-        bio,
-      });
-
-      mutateFetchedUser();
-
-      toast.success("Updated");
-      editModal.onClose();
-    } catch (e) {
-      toast.error("Something went wrong!");
-    } finally {
-      setIsLoading(false);
+    if (profileImage && currentUserData?.profileImage !== profileImage) {
+      const { presigneUrl, filePath } = await generatePresignedUrl(
+        `auth/presignedurlForProfile`
+      );
+      await uploadObject(presigneUrl, profileImage);
+      profileImageKeyPath = filePath;
     }
+
+    let coverImageKeyPath = currentUserData?.coverImage || null;
+    if (coverImage && currentUserData.coverImage !== coverImage) {
+      const {
+        presigneUrl: presigneUrlForCoverImage,
+        filePath: coverImagefilePath,
+      } = await generatePresignedUrl(`auth/presignedurlForCoverImage`);
+      await uploadObject(presigneUrlForCoverImage, coverImage);
+      coverImageKeyPath = coverImagefilePath;
+    }
+
+    updateProfile({
+      username,
+      name,
+      bio,
+      profileImage: profileImageKeyPath,
+      coverImage: coverImageKeyPath,
+    });
   }, [
-    name,
-    username,
-    bio,
+    currentUserData?.profileImage,
+    currentUserData.coverImage,
     profileImage,
     coverImage,
-    mutateFetchedUser,
-    editModal,
+    updateProfile,
+    username,
+    name,
+    bio,
+    generatePresignedUrl,
+    uploadObject,
   ]);
 
+  useEffect(() => {
+    if (isSuccess) {
+      onClose();
+    }
+  }, [isSuccess, onClose]);
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <ImageUpload
-        value={profileImage}
+        value={currentUserData.profileImageUrl || profileImage}
         disabled={isLoading}
         onChange={(image) => setProfileImage(image)}
         label="Upload profile image"
       />
 
       <ImageUpload
-        value={coverImage}
+        value={currentUserData.coverImageUrl || coverImage}
         disabled={isLoading}
         onChange={(image) => setCoverImage(image)}
         label="Upload cover image"

@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 
 export const validateRegisterRequestBody = [
   body('name')
@@ -55,4 +55,15 @@ export const validateLoginRequestBody = [
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters')
     .trim(),
+];
+
+export const validateRefreshTokenequestBody = [
+  body('refreshToken')
+    .notEmpty()
+    .withMessage('RefreshToken is required')
+    .isString(),
+];
+
+export const validateCheckEmail = [
+  query('email').notEmpty().withMessage('email is required').isString(),
 ];
