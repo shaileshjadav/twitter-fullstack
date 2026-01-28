@@ -9,9 +9,9 @@ const useAwsUpload = () => {
         presigneUrl: response.data.url,
         filePath: response.data.filePath,
       };
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.log(e);
-      throw Error(e);
+      throw e;
     }
   };
 
@@ -32,9 +32,9 @@ const useAwsUpload = () => {
       const blobData = dataURItoBlob(dataURI);
 
       return await axios.put(presignedUrl, blobData);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      throw Error(e);
+      throw e;
     }
   };
 

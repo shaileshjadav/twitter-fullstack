@@ -1,13 +1,13 @@
-import useRegisterModal from "@/hooks/useRegisterModal";
+// import useRegisterModal from "@/hooks/useRegisterModal";
 import useLoginModal from "../../hooks/useLoginModal";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { FaFeather } from "react-icons/fa";
 
 const SidbarbarTweetButton = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const loginModal = useLoginModal();
-  const registerModal = useRegisterModal();
+  // const registerModal = useRegisterModal();
   // TODO:implement auth modal
   const onClick = useCallback(() => {
     loginModal.onOpen();

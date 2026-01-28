@@ -8,10 +8,20 @@ const usePost = (postId: string) => {
     const result = await apiSecure.get(url);
     return result.data;
   };
-  const { data, error, isLoading } = useQuery("post", fetchPost);
+
+  const {
+    data,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: fetchPost,
+  });
+
   const responseData = data;
   return { data: responseData, error, isLoading };
 };
+
 export default usePost;
 
 // const usePosts = (userId?: string) => {

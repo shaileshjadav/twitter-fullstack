@@ -1,9 +1,31 @@
-import fetcher from "@/libs/fetcher";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
+import apiSecure from "../libs/axios";
 
 const useNotifications = (userId?: string) => {
-  const url = userId ? `/api/notifications/${userId}` : null;
-  const { data, error, isLoading, mutate } = useSWR(url, fetcher);
-  return { data, error, isLoading, mutate };
+  const fetchNotifications = async () => {
+    if (!userId) return [];
+
+    try {
+      const response = await apiSecure.get(`/notifications/${userId}`);
+      return response.data ?? [];
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  };
+
+  const {
+    data,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["notifications", userId],
+    queryFn: fetchNotifications,
+    enabled: !!userId,
+  });
+
+  return { data, error, isLoading, mutate: refetch };
 };
+
 export default useNotifications;

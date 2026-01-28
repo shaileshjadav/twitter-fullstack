@@ -26,9 +26,9 @@ const usePost = (postId: string) => {
       }
       const url = isComment ? `/comments?postId=${postId}` : `/posts`;
       return await apiSecure.post(url, postData);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      throw Error(e);
+      throw e;
     }
   };
 
