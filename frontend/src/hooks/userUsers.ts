@@ -1,8 +1,27 @@
-import fetcher from "@/libs/fetcher";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
+import apiSecure from "../libs/axios";
 
 const userUsers = () => {
-  const { data, error, isLoading, mutate } = useSWR("/api/users", fetcher);
-  return { data, error, isLoading, mutate };
+  const fetchUsers = async () => {
+    try {
+      const response = await apiSecure.get("/users");
+      return response.data;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  };
+
+  const {
+    data,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: fetchUsers,
+  });
+
+  return { data, error, isLoading };
 };
+
 export default userUsers;

@@ -1,12 +1,12 @@
 import { BsTwitterX } from "react-icons/bs";
-import { useRouter } from "next/router";
+import { useNavigate } from "react-router-dom";
 
 const SidebarLogo = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div
-      onClick={() => router.push("./")}
+      onClick={() => navigate("/home")}
       className="rounded-full
                 h-14
                 w-14

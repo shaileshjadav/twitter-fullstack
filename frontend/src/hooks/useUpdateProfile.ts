@@ -16,9 +16,9 @@ const useUpdateProfile = (userId: string | undefined) => {
     try {
       const url = `auth/update`;
       return await apiSecure.patch(url, userData);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
-      throw Error(e);
+      throw e;
     }
   };
 

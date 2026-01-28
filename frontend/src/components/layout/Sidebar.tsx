@@ -1,17 +1,23 @@
-import { BsHouseFill, BsBellFill } from "react-icons/bs";
-import { BiBadge, BiLogOut } from "react-icons/bi";
+import { BsHouseFill } from "react-icons/bs";
+import { BiLogOut } from "react-icons/bi";
+import type { IconType } from "react-icons";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-import SidebarLogo from "./SidebarLogo";
 import SidebarItem from "./SidebarItem";
-// import SidbarbarTweetButton from "./SidbarbarTweetButton";
 import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
   const { user: currentUser, signOut } = useAuth();
   const navigate = useNavigate();
-  const items = [
+  interface SidebarConfigItem {
+    label: string;
+    href?: string;
+    icon: IconType;
+    alert?: boolean;
+  }
+
+  const items: SidebarConfigItem[] = [
     {
       label: "Home",
       href: "/home",
@@ -35,7 +41,6 @@ const Sidebar = () => {
     <div className="col-span-1 h-full pr-4 md:pr-5 ">
       <div className="flex flex-col flex-end fixed">
         <div className="space-y-2 lg:w[230px]">
-          {/* <SidebarLogo /> */}
           {items.map((item) => (
             <SidebarItem
               key={item.href}
@@ -55,7 +60,6 @@ const Sidebar = () => {
               }}
             />
           )}
-          {/* <SidbarbarTweetButton /> */}
         </div>
       </div>
     </div>
