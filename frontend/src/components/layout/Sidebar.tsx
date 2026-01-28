@@ -5,7 +5,6 @@ import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import SidebarItem from "./SidebarItem";
-// import SidbarbarTweetButton from "./SidbarbarTweetButton";
 import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
@@ -61,7 +60,6 @@ const Sidebar = () => {
               }}
             />
           )}
-          {/* <SidbarbarTweetButton /> */}
         </div>
       </div>
     </div>
